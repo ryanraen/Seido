@@ -11,26 +11,31 @@ export const DEFAULT_THRESHOLDS: Record<ExerciseType, ExerciseThresholds> = {
     trunkAngle: { min: 70, max: 115 },
     kneeBend: { min: 70, max: 135 },
     shoulderTilt: { min: 0, max: 10 },
+    bodyWidth: { min: 0, max: 0.11 },
   },
   plank: {
     trunkAngle: { min: 165, max: 195 },
     hipDrop: { min: 0, max: 0.08 },
     shoulderTilt: { min: 0, max: 8 },
+    bodyWidth: { min: 0, max: 0.11 },
+  },
+  forwardExtension: {
+    trunkAngle: { min: 135, max: 190 },
+    hipDrop: { min: 0, max: 0.08 },
+    shoulderTilt: { min: 0, max: 10 },
+    bodyWidth: { min: 0, max: 0.11 },
+  },
+  backExtension: {
+    trunkAngle: { min: 150, max: 210 },
+    hipDrop: { min: 0, max: 0.09 },
+    shoulderTilt: { min: 0, max: 10 },
+    bodyWidth: { min: 0, max: 0.11 },
   },
   bridge: {
     trunkAngle: { min: 155, max: 200 },
     hipDrop: { min: 0, max: 0.09 },
     kneeBend: { min: 60, max: 130 },
-  },
-  birdDog: {
-    trunkAngle: { min: 160, max: 200 },
-    hipDrop: { min: 0, max: 0.1 },
-    shoulderTilt: { min: 0, max: 12 },
-  },
-  deadBug: {
-    trunkAngle: { min: 150, max: 200 },
-    shoulderTilt: { min: 0, max: 10 },
-    hipDrop: { min: 0, max: 0.12 },
+    bodyWidth: { min: 0, max: 0.11 },
   },
 };
 
@@ -41,6 +46,7 @@ export type ComputedMetrics = {
   kneeBendMean: number;
   shoulderTilt: number;
   hipDelta: number;
+  bodyWidth: number;
 };
 
 export function computeMetrics(landmarks: PoseLandmarks): ComputedMetrics | null {
@@ -53,26 +59,84 @@ export function computeMetrics(landmarks: PoseLandmarks): ComputedMetrics | null
   const la = landmarks.leftAnkle;
   const ra = landmarks.rightAnkle;
 
-  if (!ls || !rs || !lh || !rh || !lk || !rk || !la || !ra) return null;
+  const hasLeftSide = Boolean(ls && lh && lk && la);
+  const hasRightSide = Boolean(rs && rh && rk && ra);
 
-  const shoulderMid = midpoint(ls, rs);
-  const hipMid = midpoint(lh, rh);
+  if (!hasLeftSide && !hasRightSide) return null;
 
-  const trunkAngle = Math.abs(lineAngle(hipMid, shoulderMid));
-  const leftKneeAngle = angleAtPoint(lh, lk, la);
-  const rightKneeAngle = angleAtPoint(rh, rk, ra);
-  const kneeBendMean = (leftKneeAngle + rightKneeAngle) / 2;
-  const shoulderTilt = absDelta(ls.y, rs.y) * 100;
-  const hipDelta = absDelta(lh.y, rh.y);
+  const trunkAngle = computeTrunkAngle({
+    ls,
+    rs,
+    lh,
+    rh,
+    hasLeftSide,
+    hasRightSide,
+  });
+
+  const leftKneeAngle = hasLeftSide ? angleAtPoint(lh!, lk!, la!) : NaN;
+  const rightKneeAngle = hasRightSide ? angleAtPoint(rh!, rk!, ra!) : NaN;
+  const fallbackKnee = Number.isFinite(leftKneeAngle)
+    ? leftKneeAngle
+    : Number.isFinite(rightKneeAngle)
+      ? rightKneeAngle
+      : 0;
+  const normalizedLeftKnee = Number.isFinite(leftKneeAngle) ? leftKneeAngle : fallbackKnee;
+  const normalizedRightKnee = Number.isFinite(rightKneeAngle) ? rightKneeAngle : fallbackKnee;
+  const kneeBendMean = (normalizedLeftKnee + normalizedRightKnee) / 2;
+  const shoulderTilt = ls && rs ? absDelta(ls.y, rs.y) * 100 : 0;
+  const hipDelta = lh && rh ? absDelta(lh.y, rh.y) : 0;
+  const bodyWidth = computeBodyWidth(ls, rs, lh, rh);
 
   return {
     trunkAngle,
-    leftKneeAngle,
-    rightKneeAngle,
+    leftKneeAngle: normalizedLeftKnee,
+    rightKneeAngle: normalizedRightKnee,
     kneeBendMean,
     shoulderTilt,
     hipDelta,
+    bodyWidth,
   };
+}
+
+function computeBodyWidth(
+  ls?: PoseLandmarks["leftShoulder"],
+  rs?: PoseLandmarks["rightShoulder"],
+  lh?: PoseLandmarks["leftHip"],
+  rh?: PoseLandmarks["rightHip"],
+): number {
+  const spans: number[] = [];
+  if (ls && rs) spans.push(absDelta(ls.x, rs.x));
+  if (lh && rh) spans.push(absDelta(lh.x, rh.x));
+
+  if (spans.length === 0) return 0;
+  return spans.reduce((sum, span) => sum + span, 0) / spans.length;
+}
+
+function computeTrunkAngle(input: {
+  ls?: PoseLandmarks["leftShoulder"];
+  rs?: PoseLandmarks["rightShoulder"];
+  lh?: PoseLandmarks["leftHip"];
+  rh?: PoseLandmarks["rightHip"];
+  hasLeftSide: boolean;
+  hasRightSide: boolean;
+}): number {
+  const { ls, rs, lh, rh, hasLeftSide, hasRightSide } = input;
+
+  if (ls && rs && lh && rh) {
+    const shoulderMid = midpoint(ls, rs);
+    const hipMid = midpoint(lh, rh);
+    return Math.abs(lineAngle(hipMid, shoulderMid));
+  }
+
+  if (hasLeftSide && ls && lh) {
+    return Math.abs(lineAngle(lh, ls));
+  }
+
+  if (hasRightSide && rs && rh) {
+    return Math.abs(lineAngle(rh, rs));
+  }
+
+  return 0;
 }
 
 export function evaluateIssues(
@@ -135,6 +199,17 @@ export function evaluateIssues(
     }
   }
 
+  if (thresholds.bodyWidth) {
+    if (metrics.bodyWidth > thresholds.bodyWidth.max) {
+      issues.push({
+        id: "side-facing",
+        message: "Turn sideways and keep your profile to the camera.",
+        severity: "error",
+        confidence: 0.9,
+      });
+    }
+  }
+
   return issues;
 }
 
@@ -146,10 +221,10 @@ function trunkMessage(exercise: ExerciseType): string {
       return "Keep your back straight from shoulders to hips.";
     case "bridge":
       return "Drive through the hips and avoid over-arching your back.";
-    case "birdDog":
-      return "Brace your core and keep your torso aligned.";
-    case "deadBug":
-      return "Keep your lower back controlled against the floor.";
+    case "forwardExtension":
+      return "Extend forward with a neutral spine and controlled reach.";
+    case "backExtension":
+      return "Extend backward slowly and keep movement controlled.";
     default:
       return "Maintain neutral trunk alignment.";
   }

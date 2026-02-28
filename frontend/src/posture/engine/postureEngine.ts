@@ -10,7 +10,7 @@ import { computeMetrics, DEFAULT_THRESHOLDS, evaluateIssues } from "./rules";
 const DEFAULT_CONFIG: Required<Pick<EngineConfig, "scoreFloor" | "smoothingAlpha" | "visibilityThreshold">> = {
   scoreFloor: 0,
   smoothingAlpha: 0.65,
-  visibilityThreshold: 0.5,
+  visibilityThreshold: 0.35,
 };
 
 export class PostureEngine {
@@ -45,7 +45,7 @@ export class PostureEngine {
       return this.buildResult(timestamp, 0.2, [
         {
           id: "low-visibility",
-          message: "Move fully into camera view.",
+          message: "Keep at least one full body side visible to the camera.",
           severity: "warn",
           confidence: 0.95,
         },
@@ -85,6 +85,7 @@ export class PostureEngine {
         kneeBendMean: metrics.kneeBendMean,
         shoulderTilt: metrics.shoulderTilt,
         hipDelta: metrics.hipDelta,
+        bodyWidth: metrics.bodyWidth,
       },
     };
 
@@ -93,20 +94,27 @@ export class PostureEngine {
   }
 
   private hasRequiredVisibility(landmarks: PoseLandmarks): boolean {
-    const minimum = this.config.visibilityThreshold ?? 0.5;
+    const minimum = this.config.visibilityThreshold ?? DEFAULT_CONFIG.visibilityThreshold;
+    const leftSideVisible = this.sideVisible(landmarks, minimum, "left");
+    const rightSideVisible = this.sideVisible(landmarks, minimum, "right");
+
+    return leftSideVisible || rightSideVisible;
+  }
+
+  private sideVisible(
+    landmarks: PoseLandmarks,
+    minimum: number,
+    side: "left" | "right",
+  ): boolean {
     const required = [
-      "leftShoulder",
-      "rightShoulder",
-      "leftHip",
-      "rightHip",
-      "leftKnee",
-      "rightKnee",
-      "leftAnkle",
-      "rightAnkle",
+      `${side}Shoulder`,
+      `${side}Hip`,
+      `${side}Knee`,
+      `${side}Ankle`,
     ] as const;
 
     return required.every((name) => {
-      const lm = landmarks[name];
+      const lm = landmarks[name as keyof PoseLandmarks];
       return lm && (lm.visibility ?? 1) >= minimum;
     });
   }
