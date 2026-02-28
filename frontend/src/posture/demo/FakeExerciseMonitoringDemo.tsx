@@ -7,12 +7,12 @@ import { extractFirstPose, getPoseLandmarker } from "./poseLandmarker";
 
 type DemoMode = "camera" | "fake";
 
-const EXERCISES: ExerciseType[] = [
-  "squat",
-  "plank",
-  "bridge",
-  "birdDog",
-  "deadBug",
+const EXERCISES: { value: ExerciseType; label: string }[] = [
+  { value: "squat", label: "squat" },
+  { value: "forwardExtension", label: "forward extension" },
+  { value: "backExtension", label: "back extension" },
+  { value: "plank", label: "plank" },
+  { value: "bridge", label: "bridge" },
 ];
 
 export function FakeExerciseMonitoringDemo() {
@@ -32,7 +32,7 @@ export function FakeExerciseMonitoringDemo() {
     config: {
       exercise,
       smoothingAlpha: 0.6,
-      visibilityThreshold: 0.5,
+      visibilityThreshold: 0.35,
       scoreFloor: 0,
     },
   });
@@ -47,8 +47,9 @@ export function FakeExerciseMonitoringDemo() {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           video: {
-            width: { ideal: 1280 },
-            height: { ideal: 720 },
+            width: { ideal: 720 },
+            height: { ideal: 1280 },
+            aspectRatio: { ideal: 9 / 16 },
             facingMode: "user",
           },
           audio: false,
@@ -189,8 +190,8 @@ export function FakeExerciseMonitoringDemo() {
             style={styles.select}
           >
             {EXERCISES.map((item) => (
-              <option key={item} value={item}>
-                {item}
+              <option key={item.value} value={item.value}>
+                {item.label}
               </option>
             ))}
           </select>
@@ -310,8 +311,10 @@ const styles: Record<string, CSSProperties> = {
     background: "#020617",
     borderRadius: "8px",
     display: "block",
+    height: "640px",
     maxWidth: "100%",
-    width: "640px",
+    objectFit: "cover",
+    width: "360px",
   },
   pre: {
     background: "#f8fafc",

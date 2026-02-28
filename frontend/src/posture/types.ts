@@ -43,10 +43,10 @@ export type PostureFrameResult = {
 
 export type ExerciseType =
   | "squat"
+  | "forwardExtension"
+  | "backExtension"
   | "plank"
-  | "bridge"
-  | "birdDog"
-  | "deadBug";
+  | "bridge";
 
 export type PostureRuleContext = {
   exercise: ExerciseType;
@@ -69,6 +69,7 @@ export type ExerciseThresholds = {
   hipDrop?: ThresholdRange;
   kneeBend?: ThresholdRange;
   shoulderTilt?: ThresholdRange;
+  bodyWidth?: ThresholdRange;
 };
 
 export type EngineConfig = {
