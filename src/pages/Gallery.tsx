@@ -1,4 +1,3 @@
-import { Check } from "lucide-react";
 import TiltableCard from "@/components/ui/TiltableCard";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -260,7 +259,7 @@ const Gallery = () => {
             curated movement library
           </p>
           <h1 className="text-4xl md:text-5xl font-bold text-foreground">
-            Exercise gallery
+            Exercise Gallery
           </h1>
           <p className="text-base md:text-lg text-muted-foreground max-w-3xl mx-auto">
             Explore each movement that feeds our posture analysis. Tap any card to see the coaching cues, target area, and live form indicators.
@@ -300,80 +299,98 @@ const Gallery = () => {
           </div>
         </div>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {exercises.map((exercise) => (
             <TiltableCard
               key={exercise.name}
               rotateAmplitude={6}
-              scaleOnHover={1.01}
+              scaleOnHover={1.02}
               className="h-full"
             >
-              <div className="h-full overflow-hidden rounded-[32px] border border-border bg-white shadow-[0_20px_45px_rgba(0,0,0,0.05)]">
+              <div className="h-full overflow-hidden rounded-2xl border border-border shadow-[0_10px_30px_rgba(0,0,0,0.08)] bg-white flex flex-col">
+                {/* Image section */}
                 <div
-                  className="h-36 bg-cover bg-center"
+                  className="h-40 bg-cover bg-center flex-shrink-0 relative"
                   style={{ backgroundImage: `url(${exercise.image})` }}
-                />
-                <div className="flex flex-col gap-4 p-6">
-                  <div className="flex items-baseline justify-between">
-                    <div>
-                      <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground">
-                        {exercise.intensity}
-                      </p>
-                      <h2 className="text-2xl font-semibold text-foreground">
-                        {exercise.name}
-                      </h2>
-                      <p className="text-sm text-muted-foreground">
-                        {exercise.focus}
-                      </p>
-                    </div>
-                    <span className="text-xs font-semibold text-emerald-600">
+                >
+                  {/* Intensity badge */}
+                  <div className="absolute top-2 left-2">
+                    <span className="px-2 py-1 text-[10px] uppercase tracking-wider font-medium bg-white/90 text-foreground rounded-full">
+                      {exercise.intensity}
+                    </span>
+                  </div>
+                  
+                  {/* Status badge */}
+                  <div className="absolute top-2 right-2">
+                    <span className={`px-2 py-1 text-[10px] uppercase tracking-wider font-semibold rounded-full ${
+                      exercise.status === "Good" 
+                        ? "bg-emerald-500/90 text-white" 
+                        : "bg-amber-500/90 text-white"
+                    }`}>
                       {exercise.status}
                     </span>
                   </div>
-                  <p className="text-sm leading-relaxed text-muted-foreground">
+                </div>
+                
+                {/* Content section */}
+                <div className="flex-1 p-4 flex flex-col gap-3">
+                  <div>
+                    <h2 className="text-lg font-semibold text-foreground leading-tight">
+                      {exercise.name}
+                    </h2>
+                    <p className="text-xs text-muted-foreground">
+                      {exercise.focus}
+                    </p>
+                  </div>
+                  
+                  <p className="text-xs text-muted-foreground leading-relaxed">
                     {exercise.description}
                   </p>
-
-                  <div className="grid grid-cols-2 gap-3">
+                  
+                  {/* Stats */}
+                  <div className="grid grid-cols-2 gap-2">
                     {Object.entries(exercise.stats).map(([label, value]) => (
                       <div
                         key={label}
-                        className="rounded-2xl border border-slate-100 bg-slate-50/70 px-3 py-3 text-center"
+                        className="rounded-lg bg-slate-50 px-2 py-2 text-center"
                       >
-                        <p className="text-foreground font-semibold text-lg">
+                        <p className="text-foreground font-semibold text-sm">
                           {value}
                         </p>
-                        <p className="text-[11px] uppercase tracking-wider text-muted-foreground">
+                        <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
                           {label}
                         </p>
                       </div>
                     ))}
                   </div>
-
+                  
+                  {/* Cues */}
                   <div>
-                    <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground">
-                      Coaching cues
+                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
+                      Coaching Cues
                     </p>
-                    <ul className="mt-2 space-y-2 text-sm text-foreground">
+                    <ul className="space-y-1 text-xs text-foreground">
                       {exercise.cues.map((cue) => (
-                        <li key={cue} className="flex items-center gap-2">
-                          <Check className="w-4 h-4 text-emerald-500" />
+                        <li key={cue} className="flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0" />
                           {cue}
                         </li>
                       ))}
                     </ul>
-                    {exercise.ctaLink && (
-                      <Link to={exercise.ctaLink}>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="mt-3 w-full justify-center rounded-full border-slate-200 text-slate-700 hover:border-slate-300"
-                        >
-                          Try demo
-                        </Button>
-                      </Link>
-                    )}
                   </div>
+                  
+                  {/* CTA Button - always show if available */}
+                  {exercise.ctaLink && (
+                    <Link to={exercise.ctaLink} className="block mt-auto pt-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full justify-center rounded-full border-slate-200 text-foreground text-xs py-1.5 h-8 hover:bg-slate-50"
+                      >
+                        Try demo
+                      </Button>
+                    </Link>
+                  )}
                 </div>
               </div>
             </TiltableCard>

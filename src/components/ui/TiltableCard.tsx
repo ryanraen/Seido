@@ -58,7 +58,7 @@ export default function TiltableCard({
       onMouseLeave={handleMouseLeave}
     >
       <motion.div
-        className="[transform-style:preserve-3d] will-change-transform"
+        className="[transform-style:preserve-3d] will-change-transform h-full"
         style={{
           rotateX,
           rotateY,
