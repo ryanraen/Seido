@@ -610,7 +610,7 @@ const InterviewPhase = ({
           ) : (
             transcriptMessages.map((msg, i) => (
               <div
-                key={`${msg.from}-${i}-${msg.text.slice(0, 16)}`}
+                key={`${msg.from}-${i}`}
                 className={`flex ${msg.from === "user" ? "justify-end" : "justify-start"}`}
               >
                 {msg.from === "ai" && (
@@ -625,7 +625,10 @@ const InterviewPhase = ({
                       : "bg-sage-light text-foreground rounded-bl-sm border border-sage/20"
                   }`}
                 >
-                  {msg.text}
+                  <TypewriterText
+                    text={msg.text}
+                    charIntervalMs={msg.from === "ai" ? 9 : 7}
+                  />
                 </div>
                 {msg.from === "user" && (
                   <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center ml-2 shrink-0 mt-1">
@@ -642,6 +645,62 @@ const InterviewPhase = ({
       </div>
     </div>
   );
+};
+
+const TypewriterText = ({
+  text,
+  charIntervalMs = 5,
+}: {
+  text: string;
+  charIntervalMs?: number;
+}) => {
+  const [visibleCount, setVisibleCount] = useState(0);
+
+  useEffect(() => {
+    const prefersReducedMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (prefersReducedMotion) {
+      setVisibleCount(text.length);
+      return;
+    }
+  }, [text]);
+
+  useEffect(() => {
+    if (!text) {
+      setVisibleCount(0);
+      return;
+    }
+
+    // New shorter message means a new bubble; restart typing from beginning.
+    if (visibleCount > text.length) {
+      setVisibleCount(0);
+      return;
+    }
+
+    // Keep the rendered text close to live transcript updates so it doesn't lag behind speech.
+    const maxLagChars = 6;
+    if (text.length - visibleCount > maxLagChars) {
+      setVisibleCount(text.length - maxLagChars);
+      return;
+    }
+
+    if (visibleCount >= text.length) return;
+
+    let timeoutId: number | null = null;
+    timeoutId = window.setTimeout(() => {
+      setVisibleCount((count) => Math.min(text.length, count + 3));
+    }, Math.max(2, charIntervalMs));
+
+    return () => {
+      if (timeoutId !== null) {
+        window.clearTimeout(timeoutId);
+      }
+    };
+  }, [text, charIntervalMs, visibleCount]);
+
+  return <span>{text.slice(0, visibleCount)}</span>;
 };
 
 const MovementPhase = ({
@@ -670,6 +729,7 @@ const MovementPhase = ({
   const smoothedPoseRef = useRef<NormalizedLandmark[] | null>(null);
   const goodStreakRef = useRef(0);
   const lastAdviceAtRef = useRef(0);
+  const lastAdviceKeyRef = useRef<string | null>(null);
   const lastTransitionAtRef = useRef(0);
   const lastExerciseAnnouncedRef = useRef<number | null>(null);
   const successPopupHoldTimerRef = useRef<number | null>(null);
@@ -820,6 +880,8 @@ const MovementPhase = ({
       `Exercise ${exerciseIndex + 1} of ${total}: ${currentExerciseLabel}. Hold steady and follow the on-screen guidance.`,
     );
     lastExerciseAnnouncedRef.current = exerciseIndex;
+    lastAdviceKeyRef.current = null;
+    lastAdviceAtRef.current = 0;
   }, [exerciseIndex, currentExerciseLabel, vapi.isActive, vapi.speak, isRoutineComplete]);
 
   useEffect(() => {
@@ -895,6 +957,7 @@ const MovementPhase = ({
     const issue = primaryFormIssue?.message ?? null;
 
     if (goodEnough) {
+      lastAdviceKeyRef.current = null;
       goodStreakRef.current += 1;
       if (goodStreakRef.current >= 18 && now - lastTransitionAtRef.current > 7000) {
         const nextIndex = exerciseIndex + 1;
@@ -924,11 +987,16 @@ const MovementPhase = ({
     }
 
     goodStreakRef.current = 0;
-    if (issue && now - lastAdviceAtRef.current > 8000) {
-      const coaching = issue;
-      lastAdviceAtRef.current = now;
-      if (vapi.isActive) vapi.speak(coaching);
-    }
+    if (!issue || !vapi.isActive) return;
+
+    const adviceKey = primaryFormIssue?.id ?? issue;
+    const isSameAdvice = lastAdviceKeyRef.current === adviceKey;
+    const intervalMs = isSameAdvice ? 22000 : 4500;
+    if (now - lastAdviceAtRef.current < intervalMs) return;
+
+    lastAdviceAtRef.current = now;
+    lastAdviceKeyRef.current = adviceKey;
+    vapi.speak(issue);
   }, [
     posture.latestResult,
     running,
@@ -939,6 +1007,13 @@ const MovementPhase = ({
     vapi.isActive,
     vapi.speak,
   ]);
+
+  useEffect(() => {
+    if (isRoutineComplete) {
+      lastAdviceKeyRef.current = null;
+      lastAdviceAtRef.current = 0;
+    }
+  }, [isRoutineComplete]);
 
   useEffect(() => {
     const latest = posture.latestResult;

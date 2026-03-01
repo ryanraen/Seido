@@ -38,11 +38,18 @@ export function useVapi() {
     vapi.on("speech-end",   () => setCallState("listening"));
 
     vapi.on("message", (msg: any) => {
-      if (msg.type === "transcript" && msg.transcriptType === "final") {
-        setTranscript(prev => [...prev, {
-          role: msg.role,
-          text: msg.transcript,
-        }]);
+      if (msg.type === "transcript") {
+        const role = typeof msg.role === "string" ? msg.role : "assistant";
+        const text = typeof msg.transcript === "string" ? msg.transcript.trim() : "";
+        if (!text) return;
+
+        setTranscript((prev) =>
+          upsertTranscriptMessage(prev, {
+            role,
+            text,
+            transcriptType: msg.transcriptType,
+          }),
+        );
       }
       if (msg.type === "end-of-call-report") {
         setAssessmentResult(msg.analysis?.structuredData ?? null);
@@ -108,4 +115,64 @@ export function useVapi() {
     toggleMute,
     speak,
   };
+}
+
+function upsertTranscriptMessage(
+  previous: { role: string; text: string }[],
+  nextMessage: { role: string; text: string; transcriptType?: string },
+): { role: string; text: string }[] {
+  const next = [...previous];
+  const last = next[next.length - 1];
+  const isFinal = nextMessage.transcriptType === "final";
+  const nextRole = normalizeRole(nextMessage.role);
+  const nextText = normalizeTranscriptText(nextMessage.text);
+  const sameRoleAsLast =
+    Boolean(last) && normalizeRole(last.role) === nextRole;
+
+  // Late/replayed events can arrive out of order; skip near-duplicate same-role content.
+  const mostRecentSameRole = [...next]
+    .reverse()
+    .find((entry) => normalizeRole(entry.role) === nextRole);
+  if (mostRecentSameRole) {
+    const recentText = normalizeTranscriptText(mostRecentSameRole.text);
+    const duplicateText =
+      recentText === nextText ||
+      recentText.startsWith(nextText) ||
+      nextText.startsWith(recentText);
+    if (duplicateText) {
+      // Keep the longer/more complete version when possible.
+      if (sameRoleAsLast && nextMessage.text.length > (last?.text.length ?? 0)) {
+        next[next.length - 1] = { role: nextMessage.role, text: nextMessage.text };
+        return next;
+      }
+      return previous;
+    }
+  }
+
+  if (sameRoleAsLast) {
+    if (last.text === nextMessage.text) return previous;
+    next[next.length - 1] = { role: nextMessage.role, text: nextMessage.text };
+    return next;
+  }
+
+  if (!isFinal && last && normalizeRole(last.role) !== normalizeRole(nextMessage.role)) {
+    next.push({ role: nextMessage.role, text: nextMessage.text });
+    return next;
+  }
+
+  next.push({ role: nextMessage.role, text: nextMessage.text });
+  return next;
+}
+
+function normalizeRole(role: string): string {
+  return role.toLowerCase().trim();
+}
+
+function normalizeTranscriptText(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[’]/g, "'")
+    .replace(/[^a-z0-9'\s]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
 }
