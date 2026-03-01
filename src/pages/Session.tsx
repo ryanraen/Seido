@@ -1504,17 +1504,30 @@ ${JSON.stringify(
         <PhaseIndicator current="summary" />
       </div>
 
-      <div className="md:hidden flex gap-2 p-3 bg-card border-b border-border overflow-x-auto">
-        {phases.map((phase, i) => {
-          const isActive = phase.id === "summary";
-          return (
-            <span
-              key={phase.id}
-              className={`text-xs px-3 py-1.5 rounded-full font-semibold whitespace-nowrap ${
-                isActive ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-              }`}
-            >
-              {i + 1}. {phase.sublabel}
+    <div className="md:hidden flex gap-2 p-3 bg-card border-b border-border overflow-x-auto">
+      {phases.map((phase, i) => {
+        const isActive = phase.id === "summary";
+        return (
+          <span
+            key={phase.id}
+            className={`text-xs px-3 py-1.5 rounded-full font-semibold whitespace-nowrap ${isActive ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
+          >
+            {i + 1}. {phase.sublabel}
+          </span>
+        );
+      })}
+    </div>
+
+    <div className="flex-1 flex items-center justify-center p-4 md:p-8">
+      <div className="max-w-3xl w-full space-y-8 animate-fade-in">
+      <div className="text-center space-y-3">
+        <p className="text-sm text-terracotta font-bold uppercase tracking-widest">
+          Session Complete
+        </p>
+        <div className="inline-flex items-center justify-center w-28 h-28 rounded-full bg-sage-light border-4 border-sage/30 mx-auto">
+          <div className="text-center">
+            <span className="text-4xl font-bold text-foreground block">
+              {summary ? <CountUp to={summary.averageScore} duration={1.5} /> : "--"}
             </span>
           );
         })}
@@ -1538,12 +1551,17 @@ ${JSON.stringify(
               Great effort! Here is your detailed breakdown.
             </p>
           </div>
-
-          {!summary && !isLoading ? (
-            <div className="bg-card rounded-2xl p-6 border border-border shadow-sm text-center">
-              <p className="text-sm text-muted-foreground">
-                Complete the movement assessment to generate your recovery plan.
-              </p>
+        </div>
+        <p className="text-muted-foreground text-lg">
+          Great effort! Here is your detailed breakdown.
+        </p>
+      </div>
+ 
+      <div className="grid sm:grid-cols-2 gap-5 md:gap-6">
+        <div className="bg-success-light rounded-2xl p-5 md:p-6 border-2 border-success/25 shadow-sm">
+          <h3 className="font-bold text-foreground mb-4 flex items-center gap-2">
+            <div className="w-8 h-8 rounded-full bg-success/20 flex items-center justify-center">
+              <Check className="w-4 h-4 text-success" />
             </div>
           ) : planPdfUrl ? (
             <div className="bg-card rounded-2xl border border-border shadow-sm p-4">
