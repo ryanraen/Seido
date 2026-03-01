@@ -1520,7 +1520,7 @@ ${JSON.stringify(
   }, [summary]);
 
   return (
-    <div className="flex flex-col md:flex-row min-h-[calc(100vh-65px)] bg-gradient-to-br from-background via-warm-white to-peach/20">
+    <div className="flex flex-col md:flex-row min-h-[calc(100vh-65px)]">
     <div className="hidden md:flex w-56 border-r-2 border-border bg-card flex-col">
       <PhaseIndicator current="summary" />
     </div>
@@ -1539,120 +1539,212 @@ ${JSON.stringify(
       })}
     </div>
 
-    <div className="flex-1 flex items-center justify-center p-4 md:p-8">
-      <div className="max-w-4xl w-full space-y-8 animate-fade-in">
-      <div className="text-center space-y-3">
-        <p className="text-sm text-terracotta font-bold uppercase tracking-widest">
-          Session Complete
-        </p>
-        <div className="inline-flex items-center justify-center w-28 h-28 rounded-full bg-sage-light border-4 border-sage/30 mx-auto shadow-xl">
-          <div className="text-center">
-            <span className="text-4xl font-bold text-foreground block">
-              {summary ? <CountUp to={summary.averageScore} duration={1.5} /> : "--"}
-            </span>
-          );
-        })}
+    <div className="flex-1 flex flex-col">
+      {/* Header section with gradient and grid pattern */}
+      <div className="relative bg-gradient-to-br from-sage-light/40 via-background to-background px-6 md:px-12 pt-10 pb-16 overflow-hidden">
+        {/* Grid pattern overlay */}
+        <div 
+          className="absolute inset-0 opacity-30"
+          style={{
+            backgroundImage: 'linear-gradient(to right, hsl(var(--sage) / 0.15) 1px, transparent 1px), linear-gradient(to bottom, hsl(var(--sage) / 0.15) 1px, transparent 1px)',
+            backgroundSize: '40px 40px'
+          }}
+        />
+        
+        <div className="relative z-10 text-center space-y-4 max-w-2xl mx-auto animate-fade-in">
+          {/* Badge */}
+          <span className="inline-flex items-center gap-2 bg-terracotta-light text-terracotta px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest">
+            <span className="w-2 h-2 rounded-full bg-terracotta" />
+            Session Concluded
+          </span>
+          
+          {/* Title */}
+          <h1 className="text-4xl md:text-5xl font-serif text-foreground">
+            {summary ? "Session Complete" : "Analysis Required"}
+          </h1>
+          
+          {/* Subtitle */}
+          <p className="text-muted-foreground text-lg">
+            {summary 
+              ? "Great effort! Here is your detailed breakdown." 
+              : "Great effort. Complete the movement assessment to unlock your breakdown."}
+          </p>
+        </div>
       </div>
 
-      <div className="flex-1 flex items-center justify-center p-4 md:p-8">
-        <div className="max-w-3xl w-full space-y-8 animate-fade-in">
-          <div className="text-center space-y-3">
-            <p className="text-sm text-terracotta font-bold uppercase tracking-widest">
-              Session Complete
-            </p>
-            <div className="inline-flex items-center justify-center w-28 h-28 rounded-full bg-sage-light border-4 border-sage/30 mx-auto">
-              <div className="text-center">
-                <span className="text-4xl font-bold text-foreground block">
-                  {summary ? <CountUp to={summary.averageScore} duration={1.5} /> : "--"}
-                </span>
-                <span className="text-xs text-muted-foreground">/ 100</span>
+      {/* Main content */}
+      <div className="flex-1 px-6 md:px-12 py-8 bg-gradient-to-b from-background to-warm-white">
+        <div className="max-w-4xl mx-auto animate-fade-in">
+          <div className="flex flex-col lg:flex-row gap-8 items-start">
+            {/* Left: Score circle */}
+            <div className="flex flex-col items-center lg:w-1/3">
+              <div className="relative w-40 h-40">
+                {/* Dashed circle border */}
+                <svg className="absolute inset-0 w-full h-full" viewBox="0 0 160 160">
+                  <circle
+                    cx="80"
+                    cy="80"
+                    r="72"
+                    fill="none"
+                    stroke="hsl(var(--sage) / 0.3)"
+                    strokeWidth="2"
+                    strokeDasharray="8 6"
+                  />
+                </svg>
+                {/* Inner circle with score */}
+                <div className="absolute inset-4 rounded-full bg-white border-2 border-sage/20 flex items-center justify-center shadow-lg">
+                  <div className="text-center">
+                    <span className="text-5xl font-bold text-foreground block">
+                      {summary ? <CountUp to={summary.averageScore} duration={1.5} /> : "--"}
+                    </span>
+                    <span className="text-sm text-muted-foreground">/ 100</span>
+                  </div>
+                </div>
+              </div>
+              <p className="mt-4 font-semibold text-foreground">
+                {summary ? "Your Score" : "Score Pending"}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {summary ? "Based on your assessment" : "Awaiting input data"}
+              </p>
+            </div>
+
+            {/* Right: Cards */}
+            <div className="flex-1 space-y-4">
+              {/* Performance Summary Card */}
+              <div className="bg-success-light/50 rounded-2xl p-5 md:p-6 border border-success/20 shadow-sm relative">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-start gap-4 flex-1">
+                    <div className="w-10 h-10 rounded-xl bg-success/20 flex items-center justify-center flex-shrink-0">
+                      <BarChart3 className="w-5 h-5 text-success" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-bold text-foreground mb-1">Performance Summary</h3>
+                      {isLoading && (
+                        <p className="text-sm text-muted-foreground">Generating summary...</p>
+                      )}
+                      {aiError && (
+                        <p className="text-sm text-destructive">{aiError}</p>
+                      )}
+                      {!isLoading && !aiError && aiSummary && (
+                        <MarkdownContent
+                          text={aiSummary}
+                          className="text-sm text-muted-foreground leading-relaxed"
+                        />
+                      )}
+                      {!summary && !isLoading && (
+                        <p className="text-sm text-muted-foreground">
+                          Detailed breakdown of your movement patterns and form analysis.
+                        </p>
+                      )}
+                      {/* Status indicator */}
+                      <div className="flex items-center gap-2 mt-3">
+                        {summary ? (
+                          <>
+                            <Check className="w-4 h-4 text-success" />
+                            <span className="text-sm text-success font-medium">Complete</span>
+                          </>
+                        ) : (
+                          <>
+                            <div className="w-4 h-4 rounded-full border-2 border-muted-foreground/40" />
+                            <span className="text-sm text-muted-foreground">Assessment Needed</span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  {!summary && (
+                    <Lock className="w-5 h-5 text-muted-foreground/40 flex-shrink-0" />
+                  )}
+                </div>
+              </div>
+
+              {/* Recovery Plan Card */}
+              <div className="bg-white rounded-2xl p-5 md:p-6 border border-border shadow-sm relative">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-start gap-4 flex-1">
+                    <div className="w-10 h-10 rounded-xl bg-peach/30 flex items-center justify-center flex-shrink-0">
+                      <Plus className="w-5 h-5 text-terracotta" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-bold text-foreground mb-1">Recovery Plan</h3>
+                      {planLoading && (
+                        <p className="text-sm text-muted-foreground">Generating recovery plan...</p>
+                      )}
+                      {planError && (
+                        <p className="text-sm text-destructive">{planError}</p>
+                      )}
+                      {!planLoading && !planError && planText && (
+                        <MarkdownContent
+                          text={planText}
+                          maxBlocks={8}
+                          className="text-sm text-muted-foreground leading-relaxed"
+                        />
+                      )}
+                      {!planLoading && !planError && !planText && aiSummary && (
+                        <MarkdownContent
+                          text={
+                            extractRecoverySection(aiSummary) ??
+                            "Custom protocol to optimize your recovery."
+                          }
+                          className="text-sm text-muted-foreground leading-relaxed"
+                        />
+                      )}
+                      {!summary && !planLoading && (
+                        <p className="text-sm text-muted-foreground">
+                          Custom protocol to optimize muscle repair.
+                        </p>
+                      )}
+                      {/* Status indicator */}
+                      <div className="flex items-center gap-2 mt-3">
+                        {planText ? (
+                          <>
+                            <Check className="w-4 h-4 text-success" />
+                            <span className="text-sm text-success font-medium">Plan Ready</span>
+                          </>
+                        ) : (
+                          <>
+                            <span className="w-2 h-2 rounded-full bg-amber-soft" />
+                            <span className="text-sm text-amber-soft font-medium">
+                              {summary ? "Generate Plan" : "Unlock Protocol"}
+                            </span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  {!planText && (
+                    <Lock className="w-5 h-5 text-muted-foreground/40 flex-shrink-0" />
+                  )}
+                </div>
               </div>
             </div>
-            <p className="text-muted-foreground text-lg">
-              Great effort! Here is your detailed breakdown.
-            </p>
+          </div>
+
+          {/* Bottom buttons */}
+          <div className="flex flex-col sm:flex-row justify-center gap-4 mt-10">
+            <Link to="/">
+              <Button variant="hero-outline" size="lg" className="w-full sm:w-auto">
+                Return Home
+              </Button>
+            </Link>
+            {summary ? (
+              <Button variant="hero" size="lg" onClick={handleGeneratePlan}>
+                View Recovery Plan
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            ) : (
+              <Link to="/session">
+                <Button variant="hero" size="lg" className="w-full sm:w-auto">
+                  Start Assessment
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
-        <p className="text-muted-foreground text-lg">
-          Great effort! Here is your detailed breakdown.
-        </p>
       </div>
- 
-      <div className="grid sm:grid-cols-2 gap-5 md:gap-6">
-        <div className="bg-success-light rounded-3xl p-5 md:p-6 border-2 border-success/25 shadow-lg">
-          <h3 className="font-bold text-foreground mb-4 flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-success/20 flex items-center justify-center">
-              <Check className="w-4 h-4 text-success" />
-            </div>
-            Summary
-          </h3>
-          {isLoading && (
-            <p className="text-sm text-muted-foreground">Generating summary...</p>
-          )}
-          {aiError && (
-            <p className="text-sm text-destructive">{aiError}</p>
-          )}
-          {!isLoading && !aiError && aiSummary && (
-            <MarkdownContent
-              text={aiSummary}
-              className="text-sm text-foreground leading-relaxed space-y-2"
-            />
-          )}
-          {!summary && !isLoading && (
-            <p className="text-sm text-muted-foreground">
-              Complete the movement assessment to generate your summary.
-            </p>
-          )}
-        </div>
-
-        <div className="bg-amber-soft-light rounded-3xl p-5 md:p-6 border-2 border-amber-soft/25 shadow-lg">
-          <h3 className="font-bold text-foreground mb-4 flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-amber-soft/20 flex items-center justify-center">
-              <AlertTriangle className="w-4 h-4 text-amber-soft" />
-            </div>
-            Recovery Plan
-          </h3>
-          {planLoading && (
-            <p className="text-sm text-muted-foreground">Generating recovery plan...</p>
-          )}
-          {planError && (
-            <p className="text-sm text-destructive">{planError}</p>
-          )}
-          {!planLoading && !planError && planText && (
-            <MarkdownContent
-              text={planText}
-              maxBlocks={8}
-              className="text-sm text-foreground leading-relaxed space-y-2"
-            />
-          )}
-          {!planLoading && !planError && !planText && aiSummary && (
-            <MarkdownContent
-              text={
-                extractRecoverySection(aiSummary) ??
-                "Click **View Recovery Plan** to generate a personalized detailed plan."
-              }
-              className="text-sm text-foreground leading-relaxed space-y-2"
-            />
-          )}
-          {!summary && !planLoading && (
-            <p className="text-sm text-muted-foreground">
-              Complete the movement assessment to generate your recovery plan.
-            </p>
-          )}
-        </div>
-      </div>
-
-      <div className="flex flex-col sm:flex-row justify-center gap-4 pt-2">
-        <Button variant="hero" size="lg" onClick={handleGeneratePlan}>
-          View Recovery Plan
-        </Button>
-          <Link to="/">
-            <Button variant="hero-outline" size="lg" className="w-full sm:w-auto">
-              Return Home
-            </Button>
-          </Link>
-        </div>
-      </div>
+    </div>
 
       {showPlan && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
