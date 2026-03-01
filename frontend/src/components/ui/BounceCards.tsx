@@ -22,17 +22,17 @@ interface BounceCardsProps {
 export default function BounceCards({
   className = '',
   cards = [],
-  containerWidth = 800,
-  containerHeight = 280,
+  containerWidth = 1200,
+  containerHeight = 480,
   animationDelay = 0.5,
   animationStagger = 0.06,
   easeType = 'elastic.out(1, 0.8)',
   transformStyles = [
-    'rotate(-8deg) translate(-240px)',
-    'rotate(-4deg) translate(-120px)',
+    'rotate(-8deg) translate(-380px)',
+    'rotate(-4deg) translate(-190px)',
     'rotate(0deg)',
-    'rotate(4deg) translate(120px)',
-    'rotate(8deg) translate(240px)'
+    'rotate(4deg) translate(190px)',
+    'rotate(8deg) translate(380px)'
   ],
   enableHover = true
 }: BounceCardsProps) {
@@ -150,32 +150,51 @@ export default function BounceCards({
         return (
           <div
             key={idx}
-            className={`bounce-card bounce-card-${idx} absolute w-[140px] h-[210px] rounded-2xl overflow-hidden cursor-pointer`}
+            className={`bounce-card bounce-card-${idx} absolute w-[240px] h-[360px] rounded-3xl overflow-hidden cursor-pointer group`}
             style={{
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+              boxShadow: '0 10px 40px rgba(143, 188, 148, 0.15)',
               transform: transformStyles[idx] || 'none',
               zIndex
             }}
             onMouseEnter={() => pushSiblings(idx)}
             onMouseLeave={resetSiblings}
           >
-            {/* Card background */}
-            <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900" />
+            {/* Gradient background */}
+            <div className="absolute inset-0 bg-gradient-to-br from-white via-sage-light/30 to-white" />
             
-            {/* Gradient border effect */}
-            <div className="absolute inset-0 rounded-2xl border border-slate-600/50" />
+            {/* Top accent bar */}
+            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-sage via-sage/70 to-sage" />
+            
+            {/* Border with hover effect */}
+            <div className="absolute inset-0 rounded-3xl border-2 border-sage/20 group-hover:border-sage/40 transition-colors duration-300" />
             
             {/* Content */}
-            <div className="relative z-10 flex flex-col items-center justify-center h-full p-4 text-center">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-sage to-sage/80 flex items-center justify-center mb-3 shadow-lg">
-                <Icon className="w-5 h-5 text-white" />
+            <div className="relative z-10 flex flex-col items-center h-full pt-12 pb-8 px-6 text-center">
+              {/* Icon with enhanced styling */}
+              <div className="relative mb-6">
+                <div className="absolute inset-0 bg-sage/20 rounded-2xl blur-xl" />
+                <div className="relative w-20 h-20 rounded-2xl bg-gradient-to-br from-sage via-sage to-sage/90 flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform duration-300">
+                  <Icon className="w-10 h-10 text-white drop-shadow-sm" />
+                </div>
               </div>
-              <h3 className="text-xs font-bold text-white mb-2 leading-tight">
-                {card.title}
-              </h3>
-              <p className="text-[10px] text-slate-400 leading-relaxed">
+              
+              {/* Title with decorative underline */}
+              <div className="mb-4">
+                <h3 className="text-lg font-bold text-foreground mb-2 leading-tight tracking-tight">
+                  {card.title}
+                </h3>
+                <div className="w-12 h-0.5 mx-auto bg-gradient-to-r from-transparent via-sage to-transparent" />
+              </div>
+              
+              {/* Description */}
+              <p className="text-sm text-muted-foreground leading-relaxed font-medium">
                 {card.description}
               </p>
+              
+              {/* Bottom decorative element */}
+              <div className="mt-auto pt-4">
+                <div className="w-8 h-1 rounded-full bg-sage/30 mx-auto" />
+              </div>
             </div>
           </div>
         );

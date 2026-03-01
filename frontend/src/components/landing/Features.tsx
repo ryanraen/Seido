@@ -36,11 +36,11 @@ const features = [
 ];
 
 const transformStyles = [
-  'rotate(-8deg) translate(-240px)',
-  'rotate(-4deg) translate(-120px)',
+  'rotate(-8deg) translate(-380px)',
+  'rotate(-4deg) translate(-190px)',
   'rotate(0deg)',
-  'rotate(4deg) translate(120px)',
-  'rotate(8deg) translate(240px)'
+  'rotate(4deg) translate(190px)',
+  'rotate(8deg) translate(380px)'
 ];
 
 const Features = () => {
@@ -55,7 +55,7 @@ const Features = () => {
       <div className="max-w-7xl mx-auto">
         <div 
           ref={headerRef}
-          className={`text-center mb-12 md:mb-14 animate-fade-up ${headerVisible ? 'is-visible' : ''}`}
+          className={`text-center mb-10 animate-fade-up ${headerVisible ? 'is-visible' : ''}`}
         >
           <p className="text-sm font-semibold text-sage uppercase tracking-widest mb-3">
             Features
@@ -71,13 +71,13 @@ const Features = () => {
         >
           <BounceCards
             cards={features}
-            containerWidth={800}
-            containerHeight={280}
-            animationDelay={0.3}
+            containerWidth={1200}
+            containerHeight={480}
+            animationDelay={1}
             animationStagger={0.08}
             easeType="elastic.out(1, 0.8)"
             transformStyles={transformStyles}
-            enableHover={true}
+            enableHover={true} 
           />
         </div>
       </div>
