@@ -45,58 +45,6 @@ const Hero = () => {
             assessment and real-time movement feedback for accelerated recovery.
           </p>
 
-          <div className="flex flex-wrap gap-8 text-base">
-            <div className="flex items-center gap-2">
-              <Star className="w-6 h-6 text-sage" />
-              <span className="font-medium text-foreground">
-                Computer Vision
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <svg
-                className="w-6 h-6 text-sage"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <rect
-                  x="3"
-                  y="3"
-                  width="18"
-                  height="18"
-                  rx="2"
-                  strokeWidth="2"
-                />
-                <path d="M9 3v18M15 3v18M3 9h18M3 15h18" strokeWidth="2" />
-              </svg>
-              <span className="font-medium text-foreground">ROM Analysis</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <svg
-                className="w-6 h-6 text-sage"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  d="M12 2L2 7l10 5 10-5-10-5z"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M2 17l10 5 10-5M2 12l10 5 10-5"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              <span className="font-medium text-foreground">
-                Posture Correction
-              </span>
-            </div>
-          </div>
-
           <div className="flex flex-wrap gap-5 pt-3">
             <Link to="/session">
               <Button
