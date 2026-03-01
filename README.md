@@ -1,75 +1,84 @@
-# React + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<p align="center">
+  <a href="#" target="_blank" rel="noopener noreferrer">
+    <img src="src/assets/landing.png" alt="Recova App Screenshot" width="1100" />
+  </a>
+</p>
 
-Currently, two official plugins are available:
+<h1 align="center">Recova</h1>
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+<p align="center">
+  <b>Mountain Madness 2026 Hackathon Project</b><br/>
+  Team Recova with Jerry, Mike, Ryan.
+</p>
 
-## React Compiler
+<p align="center">
+  <a href="#about-the-project"><b>About The Project</b></a>
+  &nbsp;·&nbsp;
+  <a href="#how-it-works"><b>How It Works</b></a>
+  &nbsp;·&nbsp;
+  <a href="#tech-stack"><b>Tech Stack</b></a>
+  &nbsp;·&nbsp;
+  <a href="#key-features"><b>Key Features</b></a>
+  &nbsp;·&nbsp;
+  <a href="#team"><b>Team</b></a>
+</p>
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+<p align="center">
+  <img alt="React TS" src="https://img.shields.io/badge/React%20TS-Frontend-61dafb?style=flat" />
+  <img alt="Vite" src="https://img.shields.io/badge/Vite-Build%20Tool-646CFF?style=flat" />
+  <img alt="Tailwind CSS" src="https://img.shields.io/badge/TailwindCSS-Styling-38B2AC?style=flat" />
+  <img alt="Radix UI" src="https://img.shields.io/badge/Radix%20UI-Components-8B5CF6?style=flat" />
+  <img alt="React Query" src="https://img.shields.io/badge/React%20Query-Data%20Fetching-FF4154?style=flat" />
+</p>
 
-Note: This will impact Vite dev & build performances.
+---
 
-## Expanding the ESLint configuration
+## About The Project
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Recova is an AI-powered rehabilitation platform designed to make physical therapy and recovery more personal, precise, and engaging. Users can participate in guided movement sessions, receive real-time feedback, and track their progress—all from the comfort of home.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### The Problem
+Physical rehabilitation is often repetitive, hard to track, and lacks personalized feedback. Many patients struggle to stay motivated and perform exercises correctly, which can slow recovery and reduce outcomes.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Our Solution
+Recova provides a comprehensive platform where users can:
+- Join interactive, AI-guided movement sessions
+- Receive instant feedback on posture and exercise quality
+- Track progress and session history
+- Enjoy a beautiful, responsive experience on any device
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+<p align="center">
+  <img src="src/assets/landing2.png" alt="Recova Features" width="800" />
+</p>
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## How It Works
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+1. **Start a Session**: Users select a rehabilitation session tailored to their needs.
+2. **AI-Powered Guidance**: The system uses pose detection and smart algorithms to monitor movement and provide feedback.
+3. **Real-Time Feedback**: Users see live scores and tips to improve their posture and exercise form.
+4. **Session Summary**: After each session, users receive a summary and can export their progress.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Tech Stack
+
+**Frontend:**
+- React with TypeScript
+- Vite for fast development and builds
+- Tailwind CSS for styling
+- Radix UI and shadcn/ui for accessible components
+- React Query for data fetching
+- GSAP for animations
+
+**Backend/Data:**
+- AI-powered posture analysis (MediaPipe integration)
+- Session data and summaries
+- PDF export via jsPDF
+
+## Key Features
+
+- **AI-Powered Rehabilitation**: Real-time posture and movement analysis
+- **Interactive Sessions**: Guided exercises with instant feedback
+- **Progress Tracking**: Session summaries and exportable reports
+- **Beautiful UI**: Modern, responsive design for all devices
+- **Accessible Components**: Built with Radix UI and shadcn/ui
+- **Fast & Reliable**: Powered by Vite and React Query
