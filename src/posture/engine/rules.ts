@@ -8,10 +8,10 @@ import { absDelta, angleAtPoint, lineAngle, midpoint } from "./math";
 
 export const DEFAULT_THRESHOLDS: Record<ExerciseType, ExerciseThresholds> = {
   squat: {
-    trunkAngle: { min: 70, max: 115 },
-    kneeBend: { min: 70, max: 135 },
-    shoulderTilt: { min: 0, max: 10 },
-    bodyWidth: { min: 0, max: 0.11 },
+    trunkAngle: { min: 65, max: 125 },
+    kneeBend: { min: 60, max: 145 },
+    shoulderTilt: { min: 0, max: 14 },
+    bodyWidth: { min: 0, max: 0.12 },
   },
   plank: {
     trunkAngle: { min: 165, max: 195 },
@@ -199,6 +199,9 @@ export function evaluateIssues(
   thresholds: ExerciseThresholds,
 ): PostureIssue[] {
   const issues: PostureIssue[] = [];
+  const trunkMargin = exercise === "squat" ? 8 : 0;
+  const kneeMargin = exercise === "squat" ? 10 : 0;
+  const shoulderMargin = exercise === "squat" ? 2 : 0;
 
   if (thresholds.trunkAngle) {
     const trunkValue =
@@ -206,10 +209,7 @@ export function evaluateIssues(
         ? metrics.trunkLean
         : metrics.trunkAngle;
 
-    if (
-      trunkValue < thresholds.trunkAngle.min ||
-      trunkValue > thresholds.trunkAngle.max
-    ) {
+    if (!withinRangeWithMargin(trunkValue, thresholds.trunkAngle, trunkMargin)) {
       issues.push({
         id: "trunk-angle",
         message: trunkMessage(exercise),
@@ -220,10 +220,7 @@ export function evaluateIssues(
   }
 
   if (thresholds.kneeBend) {
-    if (
-      metrics.kneeBendMean < thresholds.kneeBend.min ||
-      metrics.kneeBendMean > thresholds.kneeBend.max
-    ) {
+    if (!withinRangeWithMargin(metrics.kneeBendMean, thresholds.kneeBend, kneeMargin)) {
       issues.push({
         id: "knee-bend",
         message: "Adjust knee bend to stay in a safe range.",
@@ -234,10 +231,7 @@ export function evaluateIssues(
   }
 
   if (thresholds.shoulderTilt) {
-    if (
-      metrics.shoulderTilt < thresholds.shoulderTilt.min ||
-      metrics.shoulderTilt > thresholds.shoulderTilt.max
-    ) {
+    if (!withinRangeWithMargin(metrics.shoulderTilt, thresholds.shoulderTilt, shoulderMargin)) {
       issues.push({
         id: "shoulder-tilt",
         message: "Keep shoulders level.",
@@ -270,6 +264,14 @@ export function evaluateIssues(
   }
 
   return issues;
+}
+
+function withinRangeWithMargin(
+  value: number,
+  range: { min: number; max: number },
+  margin: number,
+): boolean {
+  return value >= range.min - margin && value <= range.max + margin;
 }
 
 function trunkMessage(exercise: ExerciseType): string {
