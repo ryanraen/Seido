@@ -1,18 +1,17 @@
 import { Link } from "react-router-dom";
-import { Leaf, Mail, ArrowRight } from "lucide-react";
+import { Mail, ArrowRight, Leaf } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="w-full bg-sage text-white">
+    <footer className="w-full bg-primary text-white">
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-14 md:py-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
           {/* Brand */}
           <div className="space-y-4">
             <Link to="/" className="flex items-center gap-2.5">
-              <div className="w-9 h-9 bg-white/20 rounded-lg flex items-center justify-center">
-                <Leaf className="w-5 h-5 text-white" />
+              <div className="w-10 h-10 bg-sage rounded-full flex items-center justify-center">
+                <Leaf className="w-5 h-5 text-primary" />
               </div>
-              <span className="text-xl font-bold font-serif">Rehabify</span>
             </Link>
             <p className="text-white/70 text-sm leading-relaxed max-w-xs">
               AI-powered physiotherapy that makes healing personal, precise, and
