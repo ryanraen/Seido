@@ -1,6 +1,6 @@
 import { Leaf, LogOut, Send, Camera } from "lucide-react";
 import useScrollAnimation from "@/hooks/useScrollAnimation";
-import cameraImg from "@/assets/camera.png";
+import poseImg from "@/assets/chicken.png";
 
 const SessionPreview = () => {
   const { ref: sectionRef, isVisible: sectionVisible } = useScrollAnimation({ threshold: 0.2, rootMargin: "-50px 0px" });
@@ -98,7 +98,7 @@ const SessionPreview = () => {
               <div className="relative w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl border-4 border-primary/20">
                 {/* Camera Image */}
                 <img 
-                  src={cameraImg} 
+                  src={poseImg} 
                   alt="Camera setup" 
                   className="w-full h-64 md:h-80 object-cover"
                 />

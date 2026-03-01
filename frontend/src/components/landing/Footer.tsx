@@ -19,6 +19,39 @@ const Footer = () => {
             </p>
           </div>
 
+          {/* Company */}
+          <div>
+            <h4 className="font-bold text-sm uppercase tracking-wider mb-4 text-white/80">
+              Creators
+            </h4>
+            <ul className="space-y-3">
+              <li>
+                <a
+                  href="#features"
+                  className="text-sm text-white/60 hover:text-white transition-colors"
+                >
+                  Mike Bui
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#features"
+                  className="text-sm text-white/60 hover:text-white transition-colors"
+                >
+                  Jerry Meng
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#journey"
+                  className="text-sm text-white/60 hover:text-white transition-colors"
+                >
+                  Ryan Xie
+                </a>
+              </li>
+            </ul>
+          </div>
+
           {/* Product */}
           <div>
             <h4 className="font-bold text-sm uppercase tracking-wider mb-4 text-white/80">
@@ -55,47 +88,6 @@ const Footer = () => {
                   className="text-sm text-white/60 hover:text-white transition-colors"
                 >
                   Pricing
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Company */}
-          <div>
-            <h4 className="font-bold text-sm uppercase tracking-wider mb-4 text-white/80">
-              Company
-            </h4>
-            <ul className="space-y-3">
-              <li>
-                <a
-                  href="#"
-                  className="text-sm text-white/60 hover:text-white transition-colors"
-                >
-                  About Us
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-sm text-white/60 hover:text-white transition-colors"
-                >
-                  Careers
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-sm text-white/60 hover:text-white transition-colors"
-                >
-                  Blog
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-sm text-white/60 hover:text-white transition-colors"
-                >
-                  Contact
                 </a>
               </li>
             </ul>

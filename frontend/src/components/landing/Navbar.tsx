@@ -21,25 +21,25 @@ const Navbar = () => {
             href="#features"
             className="text-white/90 hover:text-white transition-colors text-sm font-medium"
           >
-            Platform
+            Features
           </a>
           <a
             href="#features"
             className="text-white/90 hover:text-white transition-colors text-sm font-medium"
           >
-            Assessment
+            Preview
           </a>
           <a
             href="#journey"
             className="text-white/90 hover:text-white transition-colors text-sm font-medium"
           >
-            Case Studies
+            How it Works
           </a>
           <a
             href="#journey"
             className="text-white/90 hover:text-white transition-colors text-sm font-medium"
           >
-            Pricing
+            About Us
           </a>
         </div>
 
