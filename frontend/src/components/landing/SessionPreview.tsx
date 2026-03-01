@@ -1,4 +1,4 @@
-import { Leaf, LogOut, Send, Camera } from "lucide-react";
+import { Leaf, LogOut, Send, Camera, Bot } from "lucide-react";
 import useScrollAnimation from "@/hooks/useScrollAnimation";
 import poseImg from "@/assets/chicken.png";
 
@@ -6,7 +6,7 @@ const SessionPreview = () => {
   const { ref: sectionRef, isVisible: sectionVisible } = useScrollAnimation({ threshold: 0.2, rootMargin: "-50px 0px" });
 
   return (
-    <section className="w-full px-6 md:px-12 py-16 md:py-24 bg-white">
+    <section id="preview" className="w-full px-6 md:px-12 py-16 md:py-24 bg-white">
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <div className="text-center mb-12">
@@ -42,7 +42,7 @@ const SessionPreview = () => {
                 <div className="w-8 h-8 bg-sage rounded-full flex items-center justify-center">
                   <Leaf className="w-4 h-4 text-white" />
                 </div>
-                <span className="font-bold text-foreground">Rehabify</span>
+                <span className="font-bold text-foreground">Recova</span>
               </div>
 
               {/* Progress Steps */}
@@ -132,7 +132,7 @@ const SessionPreview = () => {
               {/* Chat Header */}
               <div className="p-4 border-b border-border flex items-center gap-3">
                 <div className="w-10 h-10 bg-sage-light rounded-full flex items-center justify-center">
-                  <span className="text-lg">🤖</span>
+                  <Bot className="w-5 h-5 text-sage" />
                 </div>
                 <div>
                   <p className="font-bold text-foreground text-sm">Dr. AI Coach</p>

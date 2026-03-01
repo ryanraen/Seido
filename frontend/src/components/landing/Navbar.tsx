@@ -26,7 +26,7 @@ const Navbar = () => {
             Features
           </a>
           <a
-            href="#features"
+            href="#preview"
             className="text-white/90 hover:text-white transition-colors text-sm font-medium"
           >
             Preview
@@ -38,7 +38,7 @@ const Navbar = () => {
             How it Works
           </a>
           <a
-            href="#journey"
+            href="#footer"
             className="text-white/90 hover:text-white transition-colors text-sm font-medium"
           >
             About Us
@@ -68,16 +68,16 @@ const Navbar = () => {
       {mobileOpen && (
         <div className="md:hidden max-w-6xl mx-auto mt-2 bg-primary rounded-2xl shadow-lg p-6 flex flex-col gap-4">
           <a href="#features" className="text-white font-medium text-sm py-2">
-            Platform
+            Features
           </a>
-          <a href="#features" className="text-white font-medium text-sm py-2">
-            Assessment
-          </a>
-          <a href="#journey" className="text-white font-medium text-sm py-2">
-            Case Studies
+          <a href="#preview" className="text-white font-medium text-sm py-2">
+            Preview
           </a>
           <a href="#journey" className="text-white font-medium text-sm py-2">
-            Pricing
+            How it Works
+          </a>
+          <a href="#footer" className="text-white font-medium text-sm py-2">
+            About Us
           </a>
           <Link to="/session">
             <Button
