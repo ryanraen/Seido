@@ -28,13 +28,13 @@ const Hero = () => {
               <div className="w-8 h-8 bg-sage rounded-full flex items-center justify-center">
                 <Leaf className="w-4 h-4 text-black" />
               </div>
-              <ShinyText 
-                text="Recova" 
-                className="font-['Instrument_Serif']" 
-                color="#3d3d3d"
+              <ShinyText
+                text="Recova"
+                className="font-['Instrument_Serif']"
+                color="black"
                 shineColor="#8fbc94"
-                speed={2.5}
-                spread={100}
+                speed={3.5}
+                spread={150}
               />
             </span>
           </h2>
@@ -101,11 +101,11 @@ const Hero = () => {
               <Button
                 variant="default"
                 size="lg"
-                className="bg-primary hover:bg-primary/90 text-white font-semibold rounded-full px-8 py-6 text-lg"
+                className="bg-primary hover:bg-primary/90 text-white font-semibold rounded-full px-8 py-6 text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl active:scale-95 group"
               >
                 Begin Self-Assessment
                 <svg
-                  className="w-5 h-5"
+                  className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -122,9 +122,9 @@ const Hero = () => {
             <Button
               variant="outline"
               size="lg"
-              className="bg-white border-2 border-border hover:bg-accent font-semibold rounded-full px-8 py-6 text-lg"
+              className="bg-white border-2 border-border hover:bg-sage-light hover:border-sage font-semibold rounded-full px-8 py-6 text-lg transition-all duration-300 hover:scale-105 hover:shadow-xl active:scale-95 group"
             >
-              <div className="w-7 h-7 rounded-full bg-sage flex items-center justify-center mr-2">
+              <div className="w-7 h-7 rounded-full bg-sage flex items-center justify-center mr-2 transition-all duration-300 group-hover:scale-110 group-hover:rotate-12">
                 <Play className="w-3.5 h-3.5 text-white fill-white" />
               </div>
               Platform Demo
