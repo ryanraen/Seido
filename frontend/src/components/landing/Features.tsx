@@ -1,32 +1,46 @@
-import { Camera, HeartPulse, Activity, Brain } from "lucide-react";
+import { Camera, HeartPulse, Activity, Brain, Shield } from "lucide-react";
 import useScrollAnimation from "@/hooks/useScrollAnimation";
-import TiltableCard from "@/components/ui/TiltableCard";
+import BounceCards from "@/components/ui/BounceCards";
 
 const features = [
   {
     icon: Camera,
     title: "AI Motion Tracking",
     description:
-      "No wearables needed. Just use your camera, and our vision engine guides your form in real-time.",
+      "Camera-based vision guides your form in real-time.",
   },
   {
     icon: HeartPulse,
     title: "Personalized Plans",
     description:
-      "Tailored recovery roadmaps that adapt daily based on your pain levels and mobility score.",
+      "Recovery roadmaps that adapt to your needs.",
   },
   {
     icon: Activity,
     title: "Holistic Insights",
     description:
-      "Track your range of motion improvements over time with detailed analytics.",
+      "Track improvements with detailed analytics.",
   },
   {
     icon: Brain,
     title: "Smart Recommendations",
     description:
-      "AI-powered suggestions that learn from your progress and optimize your recovery path.",
+      "AI learns from your progress over time.",
   },
+  {
+    icon: Shield,
+    title: "Injury Prevention",
+    description:
+      "Proactive alerts to ensure safe exercise.",
+  },
+];
+
+const transformStyles = [
+  'rotate(-8deg) translate(-240px)',
+  'rotate(-4deg) translate(-120px)',
+  'rotate(0deg)',
+  'rotate(4deg) translate(120px)',
+  'rotate(8deg) translate(240px)'
 ];
 
 const Features = () => {
@@ -36,7 +50,7 @@ const Features = () => {
   return (
     <section
       id="features"
-      className="w-full px-6 md:px-12 py-16 md:py-20 bg-white"
+      className="w-full px-6 md:px-12 py-16 md:py-20 bg-white overflow-hidden"
     >
       <div className="max-w-7xl mx-auto">
         <div 
@@ -51,29 +65,20 @@ const Features = () => {
           </h2>
         </div>
 
-        <div ref={cardsRef} className="grid md:grid-cols-2 gap-8">
-          {features.map((feature, index) => (
-            <div
-              key={feature.title}
-              className={`animate-scale-in stagger-${index + 1} ${cardsVisible ? 'is-visible' : ''}`}
-            >
-              <TiltableCard rotateAmplitude={10} scaleOnHover={1.02}>
-                <div className="bg-muted/30 rounded-3xl border border-sage/10 p-8 md:p-10 hover:shadow-xl hover:border-sage/30 transition-all duration-300 group">
-                  <div
-                    className="w-16 h-16 rounded-2xl bg-sage flex items-center justify-center mb-6 group-hover:scale-110 transition-transform"
-                  >
-                    <feature.icon className="w-7 h-7 text-white" />
-                  </div>
-                  <h3 className="text-xl font-bold text-foreground mb-2 pb-2 border-b-2 border-sage/40">
-                    {feature.title}
-                  </h3>
-                  <p className="text-muted-foreground leading-relaxed mt-4">
-                    {feature.description}
-                  </p>
-                </div>
-              </TiltableCard>
-            </div>
-          ))}
+        <div 
+          ref={cardsRef} 
+          className={`flex justify-center animate-fade-up ${cardsVisible ? 'is-visible' : ''}`}
+        >
+          <BounceCards
+            cards={features}
+            containerWidth={800}
+            containerHeight={280}
+            animationDelay={0.3}
+            animationStagger={0.08}
+            easeType="elastic.out(1, 0.8)"
+            transformStyles={transformStyles}
+            enableHover={true}
+          />
         </div>
       </div>
     </section>
