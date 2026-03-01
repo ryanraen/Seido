@@ -20,13 +20,13 @@ export const DEFAULT_THRESHOLDS: Record<ExerciseType, ExerciseThresholds> = {
     bodyWidth: { min: 0, max: 0.11 },
   },
   forwardExtension: {
-    trunkAngle: { min: 135, max: 190 },
+    trunkAngle: { min: 70, max: 180},
     hipDrop: { min: 0, max: 0.08 },
     shoulderTilt: { min: 0, max: 10 },
     bodyWidth: { min: 0, max: 0.11 },
   },
   backExtension: {
-    trunkAngle: { min: 150, max: 210 },
+    trunkAngle: { min: -180, max: -20 },
     hipDrop: { min: 0, max: 0.09 },
     shoulderTilt: { min: 0, max: 10 },
     bodyWidth: { min: 0, max: 0.11 },
@@ -41,6 +41,7 @@ export const DEFAULT_THRESHOLDS: Record<ExerciseType, ExerciseThresholds> = {
 
 export type ComputedMetrics = {
   trunkAngle: number;
+  trunkLean: number;
   leftKneeAngle: number;
   rightKneeAngle: number;
   kneeBendMean: number;
@@ -72,6 +73,15 @@ export function computeMetrics(landmarks: PoseLandmarks): ComputedMetrics | null
     hasLeftSide,
     hasRightSide,
   });
+  const trunkLean = computeSignedTrunkLean({
+    nose: landmarks.nose,
+    ls,
+    rs,
+    lh,
+    rh,
+    hasLeftSide,
+    hasRightSide,
+  });
 
   const leftKneeAngle = hasLeftSide ? angleAtPoint(lh!, lk!, la!) : NaN;
   const rightKneeAngle = hasRightSide ? angleAtPoint(rh!, rk!, ra!) : NaN;
@@ -89,6 +99,7 @@ export function computeMetrics(landmarks: PoseLandmarks): ComputedMetrics | null
 
   return {
     trunkAngle,
+    trunkLean,
     leftKneeAngle: normalizedLeftKnee,
     rightKneeAngle: normalizedRightKnee,
     kneeBendMean,
@@ -139,6 +150,49 @@ function computeTrunkAngle(input: {
   return 0;
 }
 
+function computeSignedTrunkLean(input: {
+  nose?: PoseLandmarks["nose"];
+  ls?: PoseLandmarks["leftShoulder"];
+  rs?: PoseLandmarks["rightShoulder"];
+  lh?: PoseLandmarks["leftHip"];
+  rh?: PoseLandmarks["rightHip"];
+  hasLeftSide: boolean;
+  hasRightSide: boolean;
+}): number {
+  const { nose, ls, rs, lh, rh, hasLeftSide, hasRightSide } = input;
+
+  const shoulderRef =
+    ls && rs
+      ? midpoint(ls, rs)
+      : hasLeftSide && ls
+        ? ls
+        : hasRightSide && rs
+          ? rs
+          : null;
+  const hipRef =
+    lh && rh
+      ? midpoint(lh, rh)
+      : hasLeftSide && lh
+        ? lh
+        : hasRightSide && rh
+          ? rh
+          : null;
+
+  if (!shoulderRef || !hipRef) return 0;
+
+  const dx = shoulderRef.x - hipRef.x;
+  const dy = shoulderRef.y - hipRef.y;
+  if (dy === 0) return 0;
+
+  const leanMagnitude = (Math.atan2(Math.abs(dx), Math.abs(dy)) * 180) / Math.PI;
+  const torsoDirection = Math.sign(dx) || 1;
+  const facingDirection = nose
+    ? Math.sign(nose.x - shoulderRef.x) || torsoDirection
+    : torsoDirection;
+
+  return leanMagnitude * torsoDirection * facingDirection;
+}
+
 export function evaluateIssues(
   exercise: ExerciseType,
   metrics: ComputedMetrics,
@@ -147,9 +201,14 @@ export function evaluateIssues(
   const issues: PostureIssue[] = [];
 
   if (thresholds.trunkAngle) {
+    const trunkValue =
+      exercise === "forwardExtension" || exercise === "backExtension"
+        ? metrics.trunkLean
+        : metrics.trunkAngle;
+
     if (
-      metrics.trunkAngle < thresholds.trunkAngle.min ||
-      metrics.trunkAngle > thresholds.trunkAngle.max
+      trunkValue < thresholds.trunkAngle.min ||
+      trunkValue > thresholds.trunkAngle.max
     ) {
       issues.push({
         id: "trunk-angle",

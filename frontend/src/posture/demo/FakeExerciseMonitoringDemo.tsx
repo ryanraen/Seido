@@ -3,7 +3,16 @@ import { fromMediaPipePose } from "../integration/mediapipeAdapter";
 import { usePostureMonitor } from "../react/usePostureMonitor";
 import type { ExerciseType } from "../types";
 import { makeDemoLandmarks, type DemoQuality } from "./mockLandmarks";
-import { extractFirstPose, getPoseLandmarker } from "./poseLandmarker";
+import {
+  clearPoseOverlay,
+  drawPoseOverlay,
+  smoothPose,
+} from "./poseOverlay";
+import {
+  extractFirstPose,
+  getPoseLandmarker,
+  type NormalizedLandmark,
+} from "./poseLandmarker";
 
 type DemoMode = "camera" | "fake";
 
@@ -24,9 +33,27 @@ export function FakeExerciseMonitoringDemo() {
   const [cameraError, setCameraError] = useState<string | null>(null);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const overlayRef = useRef<HTMLCanvasElement | null>(null);
   const frameRef = useRef(0);
   const rafRef = useRef<number | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const smoothedPoseRef = useRef<NormalizedLandmark[] | null>(null);
+
+  useEffect(() => {
+    const resizeOverlay = () => {
+      const canvas = overlayRef.current;
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = Math.max(1, Math.round(rect.width));
+      canvas.height = Math.max(1, Math.round(rect.height));
+    };
+
+    resizeOverlay();
+    window.addEventListener("resize", resizeOverlay);
+    return () => {
+      window.removeEventListener("resize", resizeOverlay);
+    };
+  }, []);
 
   const posture = usePostureMonitor({
     config: {
@@ -62,10 +89,16 @@ export function FakeExerciseMonitoringDemo() {
 
         streamRef.current = stream;
         const video = videoRef.current;
+        const canvas = overlayRef.current;
         if (!video) return;
 
         video.srcObject = stream;
         await video.play();
+        if (canvas) {
+          const rect = canvas.getBoundingClientRect();
+          canvas.width = Math.max(1, Math.round(rect.width));
+          canvas.height = Math.max(1, Math.round(rect.height));
+        }
         setCameraReady(true);
       } catch (error) {
         setCameraReady(false);
@@ -85,6 +118,8 @@ export function FakeExerciseMonitoringDemo() {
         streamRef.current.getTracks().forEach((track) => track.stop());
         streamRef.current = null;
       }
+      smoothedPoseRef.current = null;
+      if (overlayRef.current) clearPoseOverlay(overlayRef.current);
       setCameraReady(false);
     };
   }, [mode]);
@@ -114,6 +149,7 @@ export function FakeExerciseMonitoringDemo() {
 
       const tick = () => {
         const video = videoRef.current;
+        const overlay = overlayRef.current;
 
         if (!video || video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) {
           rafRef.current = requestAnimationFrame(tick);
@@ -124,8 +160,19 @@ export function FakeExerciseMonitoringDemo() {
         const detection = detector.detectForVideo(video, timestamp);
         const pose = extractFirstPose(detection);
 
-        if (pose) {
-          posture.processFrame(Date.now(), fromMediaPipePose(pose));
+        if (pose && overlay) {
+          const smoothed = smoothPose(smoothedPoseRef.current, pose, 0.72);
+          smoothedPoseRef.current = smoothed;
+          drawPoseOverlay(
+            overlay,
+            smoothed,
+            video.videoWidth || 1,
+            video.videoHeight || 1,
+          );
+          posture.processFrame(Date.now(), fromMediaPipePose(smoothed));
+        } else if (overlay) {
+          smoothedPoseRef.current = null;
+          clearPoseOverlay(overlay);
         }
 
         rafRef.current = requestAnimationFrame(tick);
@@ -148,6 +195,8 @@ export function FakeExerciseMonitoringDemo() {
         cancelAnimationFrame(rafRef.current);
         rafRef.current = null;
       }
+      smoothedPoseRef.current = null;
+      if (overlayRef.current) clearPoseOverlay(overlayRef.current);
     };
   }, [cameraReady, mode, running, posture.processFrame]);
 
@@ -220,7 +269,10 @@ export function FakeExerciseMonitoringDemo() {
       {mode === "camera" && (
         <section style={styles.panel}>
           <h2 style={styles.subtitle}>Camera Feed</h2>
-          <video ref={videoRef} style={styles.video} muted playsInline />
+          <div style={styles.feedShell}>
+            <video ref={videoRef} style={styles.video} muted playsInline />
+            <canvas ref={overlayRef} style={styles.overlay} />
+          </div>
           {cameraError && <p style={styles.error}>Camera error: {cameraError}</p>}
           {!cameraError && !cameraReady && <p>Waiting for camera permission...</p>}
         </section>
@@ -311,10 +363,26 @@ const styles: Record<string, CSSProperties> = {
     background: "#020617",
     borderRadius: "8px",
     display: "block",
+    height: "100%",
+    objectFit: "contain",
+    width: "100%",
+  },
+  feedShell: {
+    background: "#020617",
+    borderRadius: "8px",
     height: "640px",
     maxWidth: "100%",
-    objectFit: "cover",
+    overflow: "hidden",
+    position: "relative",
     width: "360px",
+  },
+  overlay: {
+    height: "100%",
+    left: 0,
+    pointerEvents: "none",
+    position: "absolute",
+    top: 0,
+    width: "100%",
   },
   pre: {
     background: "#f8fafc",

@@ -1,4 +1,4 @@
-type NormalizedLandmark = {
+export type NormalizedLandmark = {
   x: number;
   y: number;
   z?: number;

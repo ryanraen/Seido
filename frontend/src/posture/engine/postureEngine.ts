@@ -80,6 +80,7 @@ export class PostureEngine {
       issues,
       metrics: {
         trunkAngle: metrics.trunkAngle,
+        trunkLean: metrics.trunkLean,
         leftKneeAngle: metrics.leftKneeAngle,
         rightKneeAngle: metrics.rightKneeAngle,
         kneeBendMean: metrics.kneeBendMean,
