@@ -3,7 +3,7 @@ import { Mail, ArrowRight, Leaf } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="w-full bg-primary text-white">
+    <footer id="footer" className="w-full bg-primary text-white">
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-14 md:py-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
           {/* Brand */}
@@ -17,6 +17,39 @@ const Footer = () => {
               AI-powered physiotherapy that makes healing personal, precise, and
               accessible from anywhere.
             </p>
+          </div>
+
+          {/* Company */}
+          <div>
+            <h4 className="font-bold text-sm uppercase tracking-wider mb-4 text-white/80">
+              Creators
+            </h4>
+            <ul className="space-y-3">
+              <li>
+                <a
+                  href="#features"
+                  className="text-sm text-white/60 hover:text-white transition-colors"
+                >
+                  Mike Bui
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#features"
+                  className="text-sm text-white/60 hover:text-white transition-colors"
+                >
+                  Jerry Meng
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#journey"
+                  className="text-sm text-white/60 hover:text-white transition-colors"
+                >
+                  Ryan Xie
+                </a>
+              </li>
+            </ul>
           </div>
 
           {/* Product */}
@@ -60,47 +93,6 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Company */}
-          <div>
-            <h4 className="font-bold text-sm uppercase tracking-wider mb-4 text-white/80">
-              Company
-            </h4>
-            <ul className="space-y-3">
-              <li>
-                <a
-                  href="#"
-                  className="text-sm text-white/60 hover:text-white transition-colors"
-                >
-                  About Us
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-sm text-white/60 hover:text-white transition-colors"
-                >
-                  Careers
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-sm text-white/60 hover:text-white transition-colors"
-                >
-                  Blog
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-sm text-white/60 hover:text-white transition-colors"
-                >
-                  Contact
-                </a>
-              </li>
-            </ul>
-          </div>
-
           {/* Newsletter */}
           <div>
             <h4 className="font-bold text-sm uppercase tracking-wider mb-4 text-white/80">
@@ -128,7 +120,7 @@ const Footer = () => {
 
         <div className="border-t border-white/15 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-white/50">
-            2026 Rehabify. All rights reserved.
+            2026 Recova. All rights reserved.
           </p>
           <div className="flex gap-6">
             <a

@@ -13,7 +13,9 @@ const Navbar = () => {
           <div className="w-10 h-10 bg-sage rounded-full flex items-center justify-center">
             <Leaf className="w-5 h-5 text-primary" />
           </div>
-          <span className="text-white font-bold text-lg">Rehabify</span>
+          <span className="text-white font-bold text-lg font-['Instrument_Serif']">
+            Recova
+          </span>
         </Link>
 
         <div className="hidden md:flex items-center gap-8 lg:gap-10">
@@ -21,30 +23,34 @@ const Navbar = () => {
             href="#features"
             className="text-white/90 hover:text-white transition-colors text-sm font-medium"
           >
-            Platform
+            Features
           </a>
           <a
-            href="#features"
+            href="#preview"
             className="text-white/90 hover:text-white transition-colors text-sm font-medium"
           >
-            Assessment
-          </a>
-          <a
-            href="#journey"
-            className="text-white/90 hover:text-white transition-colors text-sm font-medium"
-          >
-            Case Studies
+            Preview
           </a>
           <a
             href="#journey"
             className="text-white/90 hover:text-white transition-colors text-sm font-medium"
           >
-            Pricing
+            How it Works
+          </a>
+          <a
+            href="#footer"
+            className="text-white/90 hover:text-white transition-colors text-sm font-medium"
+          >
+            About Us
           </a>
         </div>
 
         <Link to="/session" className="hidden md:block">
-          <Button variant="default" size="sm" className="bg-white text-primary hover:bg-white/90 font-medium rounded-full px-5 py-2 h-auto">
+          <Button
+            variant="default"
+            size="sm"
+            className="bg-white text-primary hover:bg-white/90 font-medium rounded-full px-5 py-2 h-auto"
+          >
             Request Demo
           </Button>
         </Link>
@@ -61,32 +67,24 @@ const Navbar = () => {
       {/* Mobile menu */}
       {mobileOpen && (
         <div className="md:hidden max-w-6xl mx-auto mt-2 bg-primary rounded-2xl shadow-lg p-6 flex flex-col gap-4">
-          <a
-            href="#features"
-            className="text-white font-medium text-sm py-2"
-          >
-            Platform
+          <a href="#features" className="text-white font-medium text-sm py-2">
+            Features
           </a>
-          <a
-            href="#features"
-            className="text-white font-medium text-sm py-2"
-          >
-            Assessment
+          <a href="#preview" className="text-white font-medium text-sm py-2">
+            Preview
           </a>
-          <a
-            href="#journey"
-            className="text-white font-medium text-sm py-2"
-          >
-            Case Studies
+          <a href="#journey" className="text-white font-medium text-sm py-2">
+            How it Works
           </a>
-          <a
-            href="#journey"
-            className="text-white font-medium text-sm py-2"
-          >
-            Pricing
+          <a href="#footer" className="text-white font-medium text-sm py-2">
+            About Us
           </a>
           <Link to="/session">
-            <Button variant="default" size="default" className="w-full bg-white text-primary hover:bg-white/90 font-medium rounded-full">
+            <Button
+              variant="default"
+              size="default"
+              className="w-full bg-white text-primary hover:bg-white/90 font-medium rounded-full"
+            >
               Request Demo
             </Button>
           </Link>
