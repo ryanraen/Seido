@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import tailwindcssAnimate from "tailwindcss-animate";
 
 export default {
   darkMode: ["class"],
@@ -88,11 +89,22 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        orb: {
+          bg: "#0b0d12",
+          rose: "#f29aa3",
+          magenta: "#c26aff",
+          pink: "#f472d0",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      boxShadow: {
+        "orb-idle": "0 0 40px rgba(242, 154, 163, 0.35)",
+        "orb-listening": "0 0 60px rgba(194, 106, 255, 0.4)",
+        "orb-talking": "0 0 80px rgba(244, 114, 208, 0.45)",
       },
       keyframes: {
         "accordion-down": {
@@ -107,13 +119,38 @@ export default {
           from: { opacity: "0", transform: "translateY(10px)" },
           to: { opacity: "1", transform: "translateY(0)" },
         },
+        "orb-breathe": {
+          "0%, 100%": { transform: "scale(0.98)" },
+          "50%": { transform: "scale(1.02)" },
+        },
+        "orb-pulse": {
+          "0%, 100%": { transform: "scale(1)" },
+          "50%": { transform: "scale(1.06)" },
+        },
+        "orb-talk": {
+          "0%": { transform: "scale(1)" },
+          "35%": { transform: "scale(1.08)" },
+          "70%": { transform: "scale(0.98)" },
+          "100%": { transform: "scale(1)" },
+        },
+        "orb-ripple": {
+          "0%": { transform: "scale(0.6)", opacity: "0.0" },
+          "30%": { opacity: "0.55" },
+          "100%": { transform: "scale(1.15)", opacity: "0.0" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-in": "fade-in 0.6s ease-out forwards",
+        "orb-breathe": "orb-breathe 4s ease-in-out infinite",
+        "orb-pulse": "orb-pulse 2.2s ease-in-out infinite",
+        "orb-talk": "orb-talk 1.4s ease-in-out infinite",
+        "orb-ripple": "orb-ripple 2.6s ease-out infinite",
+        "orb-ripple-delayed": "orb-ripple 2.6s ease-out 0.9s infinite",
+        "orb-ripple-slow": "orb-ripple 3.6s ease-out infinite",
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [tailwindcssAnimate],
 } satisfies Config;
