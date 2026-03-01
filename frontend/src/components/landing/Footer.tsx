@@ -128,7 +128,7 @@ const Footer = () => {
 
         <div className="border-t border-white/15 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-white/50">
-            2026 Rehabify. All rights reserved.
+            2026 Recova. All rights reserved.
           </p>
           <div className="flex gap-6">
             <a

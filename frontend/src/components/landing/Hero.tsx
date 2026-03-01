@@ -12,11 +12,14 @@ const Hero = () => {
         <div className="flex-1 space-y-7">
           <div className="inline-flex items-center gap-2 bg-sage-light text-foreground px-5 py-3 rounded-full text-base font-semibold">
             <div className="w-2.5 h-2.5 rounded-full bg-sage" />
-            AI-Powered Rehabilitation v2.0
+            AI-Powered Rehabilitation
           </div>
 
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif leading-tight pb-1 bg-gradient-to-r from-foreground via-primary to-sage bg-clip-text text-transparent">
-            Healing made personal & precise
+            <span className="font-['Rouge_Script'] text-6xl md:text-7xl lg:text-9xl">
+              Healing
+            </span>{" "}
+            made personal & precise
           </h1>
           <h2 className="text-3xl md:text-4xl font-sans font-bold text-foreground flex items-center gap-3 flex-wrap">
             with{" "}
@@ -24,7 +27,7 @@ const Hero = () => {
               <div className="w-8 h-8 bg-sage rounded-full flex items-center justify-center">
                 <Leaf className="w-4 h-4 text-white" />
               </div>
-              Rehabify
+              Recova
             </span>
           </h2>
 
@@ -126,117 +129,141 @@ const Hero = () => {
           {/* Live Demo Card */}
           <TiltableCard rotateAmplitude={10} scaleOnHover={1.02}>
             <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-border p-6">
-            {/* Card Header with dots and LIVE DEMO */}
-            <div className="flex items-center justify-between mb-5">
-              <div className="flex items-center gap-2">
-                <div className="w-3.5 h-3.5 rounded-full bg-red-400" />
-                <div className="w-3.5 h-3.5 rounded-full bg-amber-400" />
-                <div className="w-3.5 h-3.5 rounded-full bg-green-400" />
-              </div>
-              <span className="text-sm font-bold text-muted-foreground tracking-wider uppercase">
-                Live Demo
-              </span>
-            </div>
-
-            {/* Main Image with overlay */}
-            <div className="relative rounded-xl overflow-hidden mb-5">
-              <img
-                src={meditationLandingImg}
-                alt="Movement analysis demo"
-                className="w-full h-56 object-cover"
-              />
-              {/* Alignment badge overlay */}
-              <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-full px-4 py-2 flex items-center gap-2 shadow-lg">
-                <div className="w-3 h-3 rounded-full bg-green-500" />
-                <span className="text-sm font-medium text-foreground">
-                  Back alignment:
+              {/* Card Header with dots and LIVE DEMO */}
+              <div className="flex items-center justify-between mb-5">
+                <div className="flex items-center gap-2">
+                  <div className="w-3.5 h-3.5 rounded-full bg-red-400" />
+                  <div className="w-3.5 h-3.5 rounded-full bg-amber-400" />
+                  <div className="w-3.5 h-3.5 rounded-full bg-green-400" />
+                </div>
+                <span className="text-sm font-bold text-muted-foreground tracking-wider uppercase">
+                  Live Demo
                 </span>
-                <span className="text-sm font-bold text-green-600">Good</span>
               </div>
-            </div>
 
-            {/* Exercise Info Footer */}
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-xl font-bold text-foreground">
-                  Cobra Stretch
-                </h3>
-                <p className="text-base text-muted-foreground">Lower back relief</p>
+              {/* Main Image with overlay */}
+              <div className="relative rounded-xl overflow-hidden mb-5">
+                <img
+                  src={meditationLandingImg}
+                  alt="Movement analysis demo"
+                  className="w-full h-56 object-cover"
+                />
+                {/* Alignment badge overlay */}
+                <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-full px-4 py-2 flex items-center gap-2 shadow-lg">
+                  <div className="w-3 h-3 rounded-full bg-green-500" />
+                  <span className="text-sm font-medium text-foreground">
+                    Back alignment:
+                  </span>
+                  <span className="text-sm font-bold text-green-600">Good</span>
+                </div>
               </div>
-              <div className="w-10 h-10 rounded-full bg-sage flex items-center justify-center">
-                <Check className="w-5 h-5 text-white" />
-              </div>
-            </div>
-          </div>
-          </TiltableCard>
 
-          {/* Movement Analysis Card */}
-          <TiltableCard rotateAmplitude={10} scaleOnHover={1.02}>
-            <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-border">
-            {/* Card Header */}
-            <div className="bg-white p-5 border-b border-border">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
-                    <span className="text-base font-bold text-white">PF</span>
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-foreground text-base">Movement Analysis</h3>
-                    <p className="text-sm text-muted-foreground">Live Session • Hip Flexion</p>
-                  </div>
+              {/* Exercise Info Footer */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-xl font-bold text-foreground">
+                    Cobra Stretch
+                  </h3>
+                  <p className="text-base text-muted-foreground">
+                    Lower back relief
+                  </p>
                 </div>
                 <div className="w-10 h-10 rounded-full bg-sage flex items-center justify-center">
                   <Check className="w-5 h-5 text-white" />
                 </div>
               </div>
+            </div>
+          </TiltableCard>
 
-              {/* Stats */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-muted rounded-xl p-4 text-center">
-                  <p className="text-3xl font-bold text-foreground mb-1">84°</p>
-                  <p className="text-sm text-muted-foreground font-medium">Current Angle</p>
+          {/* Movement Analysis Card */}
+          <TiltableCard rotateAmplitude={10} scaleOnHover={1.02}>
+            <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-border">
+              {/* Card Header */}
+              <div className="bg-white p-5 border-b border-border">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
+                      <span className="text-base font-bold text-white">PF</span>
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-foreground text-base">
+                        Movement Analysis
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        Live Session • Hip Flexion
+                      </p>
+                    </div>
+                  </div>
+                  <div className="w-10 h-10 rounded-full bg-sage flex items-center justify-center">
+                    <Check className="w-5 h-5 text-white" />
+                  </div>
                 </div>
-                <div className="bg-muted rounded-xl p-4 text-center">
-                  <p className="text-3xl font-bold text-foreground mb-1">92%</p>
-                  <p className="text-sm text-muted-foreground font-medium">Form Accuracy</p>
+
+                {/* Stats */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-muted rounded-xl p-4 text-center">
+                    <p className="text-3xl font-bold text-foreground mb-1">
+                      84°
+                    </p>
+                    <p className="text-sm text-muted-foreground font-medium">
+                      Current Angle
+                    </p>
+                  </div>
+                  <div className="bg-muted rounded-xl p-4 text-center">
+                    <p className="text-3xl font-bold text-foreground mb-1">
+                      92%
+                    </p>
+                    <p className="text-sm text-muted-foreground font-medium">
+                      Form Accuracy
+                    </p>
+                  </div>
                 </div>
+              </div>
+
+              {/* Card Body */}
+              <div className="p-5 space-y-4">
+                {/* Active Track */}
+                <div className="bg-sage-light rounded-xl p-4 border border-sage/20">
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-full bg-sage flex items-center justify-center shrink-0 mt-0.5">
+                      <div className="w-2 h-2 rounded-full bg-white" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-foreground text-base mb-0.5">
+                        Active Recovery Track
+                      </h4>
+                      <p className="text-sm text-muted-foreground">
+                        Module 4 of 12 • 15 mins left
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Structured Assessment */}
+                <div className="bg-primary rounded-xl p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="px-3 py-1.5 bg-sage rounded-full shrink-0">
+                      <span className="text-xs font-bold text-primary">
+                        REC
+                      </span>
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-white text-base mb-0.5">
+                        Structured Assessment
+                      </h4>
+                      <p className="text-sm text-white/70">
+                        Session recording enabled
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* View Report Button */}
+                <button className="w-full bg-primary hover:bg-primary/90 text-white font-semibold py-4 rounded-xl transition-colors text-base">
+                  View Full Bio-Report
+                </button>
               </div>
             </div>
-
-            {/* Card Body */}
-            <div className="p-5 space-y-4">
-              {/* Active Track */}
-              <div className="bg-sage-light rounded-xl p-4 border border-sage/20">
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-full bg-sage flex items-center justify-center shrink-0 mt-0.5">
-                    <div className="w-2 h-2 rounded-full bg-white" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-foreground text-base mb-0.5">Active Recovery Track</h4>
-                    <p className="text-sm text-muted-foreground">Module 4 of 12 • 15 mins left</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Structured Assessment */}
-              <div className="bg-primary rounded-xl p-4">
-                <div className="flex items-start gap-3">
-                  <div className="px-3 py-1.5 bg-sage rounded-full shrink-0">
-                    <span className="text-xs font-bold text-primary">REC</span>
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-white text-base mb-0.5">Structured Assessment</h4>
-                    <p className="text-sm text-white/70">Session recording enabled</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* View Report Button */}
-              <button className="w-full bg-primary hover:bg-primary/90 text-white font-semibold py-4 rounded-xl transition-colors text-base">
-                View Full Bio-Report
-              </button>
-            </div>
-          </div>
           </TiltableCard>
         </div>
       </div>

@@ -13,7 +13,7 @@ const Navbar = () => {
           <div className="w-10 h-10 bg-sage rounded-full flex items-center justify-center">
             <Leaf className="w-5 h-5 text-primary" />
           </div>
-          <span className="text-white font-bold text-lg">Rehabify</span>
+          <span className="text-white font-bold text-lg">Recova</span>
         </Link>
 
         <div className="hidden md:flex items-center gap-8 lg:gap-10">
