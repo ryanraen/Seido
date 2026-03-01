@@ -91,9 +91,9 @@ export default {
         },
         orb: {
           bg: "#0b0d12",
-          rose: "#f29aa3",
-          magenta: "#c26aff",
-          pink: "#f472d0",
+          rose: "#8fbc94",
+          magenta: "#6ba873",
+          pink: "#a8d5ae",
         },
       },
       borderRadius: {
@@ -102,9 +102,9 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       boxShadow: {
-        "orb-idle": "0 0 40px rgba(242, 154, 163, 0.35)",
-        "orb-listening": "0 0 60px rgba(194, 106, 255, 0.4)",
-        "orb-talking": "0 0 80px rgba(244, 114, 208, 0.45)",
+        "orb-idle": "0 0 40px rgba(143, 188, 148, 0.35)",
+        "orb-listening": "0 0 60px rgba(107, 168, 115, 0.4)",
+        "orb-talking": "0 0 80px rgba(168, 213, 174, 0.45)",
       },
       keyframes: {
         "accordion-down": {
