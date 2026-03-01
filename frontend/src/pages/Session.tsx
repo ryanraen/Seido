@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import PulsingOrb from "@/components/ui/PulsingOrb";
 import { useVapi } from "@/hooks/useVapi";
 import { generateGeminiText } from "@/lib/gemini";
+import jsPDF from "jspdf";
 import { fromMediaPipePose } from "@/posture/integration/mediapipeAdapter";
 import { usePostureMonitor } from "@/posture/react/usePostureMonitor";
 import type { ExerciseType } from "@/posture/types";
@@ -1187,6 +1188,7 @@ const SummaryPhase = ({ summary }: { summary: MovementSummary | null }) => {
   const [planError, setPlanError] = useState<string | null>(null);
   const [planLoading, setPlanLoading] = useState(false);
   const [showPlan, setShowPlan] = useState(false);
+  const [planPdfUrl, setPlanPdfUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (!summary) return;
@@ -1233,27 +1235,154 @@ const SummaryPhase = ({ summary }: { summary: MovementSummary | null }) => {
     setPlanLoading(true);
     setPlanError(null);
     try {
-      const prompt = [
-        "You are a physiotherapy assistant. Create a detailed recovery plan based on the posture screening.",
-        "Write it as a clean, structured document with headings and short paragraphs.",
-        "Include: Overview, Key Findings, Daily Mobility Routine, Strength & Stability, Form Cues, and When to Seek Help.",
-        "Keep it safe, supportive, and non-diagnostic.",
-        "",
-        `Average score: ${summary.averageScore}`,
-        "Exercise results:",
-        ...summary.exercises.map((item) => {
-          const issueText = item.issues.length ? item.issues.join('; ') : "No issues flagged.";
-          return `- ${EXERCISE_LABELS[item.exercise]}: score ${item.score}, status ${item.status}, issues: ${issueText}`;
-        }),
-      ].join("\n");
-      const text = await generateGeminiText({ prompt });
-      setPlanText(text);
+      const defaults: Record<ExerciseType, MovementExerciseSnapshot> = {
+        squat: {
+          exercise: "squat",
+          score: 65,
+          status: "adjust",
+          issues: ["No specific issues recorded."],
+        },
+        forwardExtension: {
+          exercise: "forwardExtension",
+          score: 65,
+          status: "adjust",
+          issues: ["No specific issues recorded."],
+        },
+        backExtension: {
+          exercise: "backExtension",
+          score: 65,
+          status: "adjust",
+          issues: ["No specific issues recorded."],
+        },
+        plank: {
+          exercise: "plank",
+          score: 65,
+          status: "adjust",
+          issues: ["No specific issues recorded."],
+        },
+        bridge: {
+          exercise: "bridge",
+          score: 65,
+          status: "adjust",
+          issues: ["No specific issues recorded."],
+        },
+      };
+
+      const byExercise = new Map<ExerciseType, MovementExerciseSnapshot>();
+      summary.exercises.forEach((item) => byExercise.set(item.exercise, item));
+
+      const squat = byExercise.get("squat") ?? defaults.squat;
+      const forwardBend = byExercise.get("forwardExtension") ?? defaults.forwardExtension;
+      const backwardBend = byExercise.get("backExtension") ?? defaults.backExtension;
+
+      const prompt = `
+You are a clinical documentation assistant. Your job is to take structured posture scoring data from a PhysioAssist Phase 2 movement screening and write a professional recovery plan.
+
+Return the plan in clean Markdown with headings and bullet points. Do not wrap the response in code fences.
+
+Include these sections as Markdown headings:
+1) Overview
+2) Key Findings (by exercise)
+3) Daily Mobility Routine
+4) Strength & Stability
+5) Form Cues
+6) When to Seek Help
+
+Rules:
+- Use neutral, clinical language (no diagnosis).
+- Keep it concise and practical.
+- If an exercise has no issues, state that no concerns were noted.
+
+Data:
+${JSON.stringify(
+  {
+    overall_average: summary.averageScore,
+    exercises: [
+      squat,
+      forwardBend,
+      backwardBend,
+    ],
+  },
+  null,
+  2,
+)}
+`.trim();
+
+      const raw = await generateGeminiText({ prompt });
+      const cleaned = raw.replace(/```/g, "").trim();
+      setPlanText(cleaned);
     } catch (error) {
       setPlanError(error instanceof Error ? error.message : "Failed to generate plan.");
     } finally {
       setPlanLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!planText) {
+      setPlanPdfUrl(null);
+      return;
+    }
+    try {
+      const doc = new jsPDF({ unit: "pt", format: "letter" });
+      const margin = 48;
+      const pageWidth = doc.internal.pageSize.getWidth() - margin * 2;
+      const headingColor: [number, number, number] = [34, 139, 84];
+      const bodyText = planText.replace(/```/g, "").trim();
+      const lines = bodyText.split("\n");
+      let cursorY = 64;
+
+      const ensureSpace = (lineHeight: number) => {
+        const pageHeight = doc.internal.pageSize.getHeight();
+        if (cursorY + lineHeight > pageHeight - margin) {
+          doc.addPage();
+          cursorY = margin;
+        }
+      };
+
+      lines.forEach((rawLine) => {
+        const line = rawLine.trimEnd();
+        if (!line) {
+          cursorY += 8;
+          return;
+        }
+
+        if (line.startsWith("#")) {
+          const level = line.match(/^#+/)?.[0].length ?? 1;
+          const text = line.replace(/^#+\s*/, "");
+          doc.setFont("times", "bold");
+          doc.setTextColor(...headingColor);
+          doc.setFontSize(level === 1 ? 18 : level === 2 ? 14 : 12);
+          ensureSpace(22);
+          doc.text(text, margin, cursorY);
+          cursorY += level === 1 ? 22 : 18;
+          doc.setTextColor(0, 0, 0);
+          doc.setFont("times", "normal");
+          return;
+        }
+
+        const isBullet = line.startsWith("- ");
+        const paragraph = isBullet ? `• ${line.slice(2)}` : line;
+        doc.setFont("times", "normal");
+        doc.setFontSize(11);
+        const wrapped = doc.splitTextToSize(paragraph, pageWidth);
+        wrapped.forEach((segment: string) => {
+          ensureSpace(14);
+          doc.text(segment, margin, cursorY);
+          cursorY += 14;
+        });
+      });
+
+      const blob = doc.output("blob");
+      const url = URL.createObjectURL(blob);
+      setPlanPdfUrl((prev) => {
+        if (prev) URL.revokeObjectURL(prev);
+        return url;
+      });
+    } catch (error) {
+      console.error("Failed to render PDF", error);
+    }
+  }, [planText]);
 
   return (
     <div className="flex flex-col md:flex-row min-h-[calc(100vh-65px)]">
@@ -1358,30 +1487,39 @@ const SummaryPhase = ({ summary }: { summary: MovementSummary | null }) => {
 
       {showPlan && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-3xl rounded-2xl border border-border bg-warm-white p-6 shadow-2xl">
-            <div className="flex items-center justify-between gap-4 mb-4">
+          <div className="w-full max-w-3xl rounded-2xl border border-border bg-warm-white shadow-2xl max-h-[90vh] flex flex-col">
+            <div className="flex items-center justify-between gap-4 px-6 py-4 border-b border-border">
               <h3 className="text-lg font-serif text-foreground">Recovery Plan</h3>
               <Button variant="hero-outline" size="sm" onClick={() => setShowPlan(false)}>
                 Close
               </Button>
             </div>
-            {planLoading && (
-              <p className="text-sm text-muted-foreground">Generating recovery plan...</p>
-            )}
-            {planError && (
-              <p className="text-sm text-destructive">{planError}</p>
-            )}
-            {!planLoading && !planError && planText && (
-              <div className="text-sm text-foreground whitespace-pre-line leading-relaxed">
-                {planText}
-              </div>
-            )}
-            {!summary && !planLoading && !planError && (
-              <p className="text-sm text-muted-foreground">
-                Complete the movement assessment to generate your recovery plan.
-              </p>
-            )}
-            <div className="mt-6 flex justify-end">
+            <div className="px-6 py-4 overflow-y-auto">
+              {planLoading && (
+                <p className="text-sm text-muted-foreground">Generating recovery plan...</p>
+              )}
+              {planError && (
+                <p className="text-sm text-destructive">{planError}</p>
+              )}
+              {!planLoading && !planError && planPdfUrl && (
+                <iframe
+                  title="Recovery Plan PDF"
+                  src={planPdfUrl}
+                  className="w-full h-[65vh] rounded-lg border border-border"
+                />
+              )}
+              {!planLoading && !planError && planText && !planPdfUrl && (
+                <div className="text-sm text-foreground whitespace-pre-line leading-relaxed">
+                  {planText}
+                </div>
+              )}
+              {!summary && !planLoading && !planError && (
+                <p className="text-sm text-muted-foreground">
+                  Complete the movement assessment to generate your recovery plan.
+                </p>
+              )}
+            </div>
+            <div className="mt-auto px-6 py-4 border-t border-border flex justify-end">
               <Button variant="hero-outline" size="sm" onClick={() => window.print()}>
                 Print
               </Button>

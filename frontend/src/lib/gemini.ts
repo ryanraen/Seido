@@ -12,8 +12,11 @@ export async function generateGeminiText({ model, prompt }: GeminiOptions) {
   }
 
   const targetModel = model ?? DEFAULT_MODEL;
+  const modelName = targetModel.startsWith("models/")
+    ? targetModel
+    : `models/${targetModel}`;
   const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${targetModel}:generateContent?key=${GEMINI_API_KEY}`,
+    `https://generativelanguage.googleapis.com/v1beta/${modelName}:generateContent?key=${GEMINI_API_KEY}`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
