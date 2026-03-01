@@ -42,7 +42,7 @@ const SessionPreview = () => {
                 <div className="w-8 h-8 bg-sage rounded-full flex items-center justify-center">
                   <Leaf className="w-4 h-4 text-white" />
                 </div>
-                <span className="font-bold text-foreground">Recova</span>
+                <span className="font-bold text-foreground">Seido</span>
               </div>
 
               {/* Progress Steps */}

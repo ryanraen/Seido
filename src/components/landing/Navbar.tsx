@@ -14,7 +14,7 @@ const Navbar = () => {
             <Leaf className="w-5 h-5 text-primary" />
           </div>
           <span className="text-white font-bold text-lg font-['Instrument_Serif']">
-            Recova
+            Seido
           </span>
         </Link>
 

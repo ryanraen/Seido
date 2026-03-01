@@ -30,7 +30,7 @@ const Hero = () => {
                 <Leaf className="w-4 h-4 text-black" />
               </div>
               <ShinyText
-                text="Recova"
+                text="Seido"
                 className="font-['Instrument_Serif']"
                 color="black"
                 shineColor="#8fbc94"
