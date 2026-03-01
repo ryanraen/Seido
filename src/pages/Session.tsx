@@ -1520,10 +1520,10 @@ ${JSON.stringify(
   }, [summary]);
 
   return (
-    <div className="flex flex-col md:flex-row min-h-[calc(100vh-65px)]">
-      <div className="hidden md:flex w-56 border-r-2 border-border bg-card flex-col">
-        <PhaseIndicator current="summary" />
-      </div>
+    <div className="flex flex-col md:flex-row min-h-[calc(100vh-65px)] bg-gradient-to-br from-background via-warm-white to-peach/20">
+    <div className="hidden md:flex w-56 border-r-2 border-border bg-card flex-col">
+      <PhaseIndicator current="summary" />
+    </div>
 
       <div className="md:hidden flex gap-2 p-3 bg-card border-b border-border overflow-x-auto">
         {phases.map((phase, i) => {
@@ -1544,12 +1544,12 @@ ${JSON.stringify(
       </div>
 
     <div className="flex-1 flex items-center justify-center p-4 md:p-8">
-      <div className="max-w-3xl w-full space-y-8 animate-fade-in">
+      <div className="max-w-4xl w-full space-y-8 animate-fade-in">
       <div className="text-center space-y-3">
         <p className="text-sm text-terracotta font-bold uppercase tracking-widest">
           Session Complete
         </p>
-        <div className="inline-flex items-center justify-center w-28 h-28 rounded-full bg-sage-light border-4 border-sage/30 mx-auto">
+        <div className="inline-flex items-center justify-center w-28 h-28 rounded-full bg-sage-light border-4 border-sage/30 mx-auto shadow-xl">
           <div className="text-center">
             <span className="text-4xl font-bold text-foreground block">
               {summary ? <CountUp to={summary.averageScore} duration={1.5} /> : "--"}
@@ -1563,31 +1563,94 @@ ${JSON.stringify(
       </div>
  
       <div className="grid sm:grid-cols-2 gap-5 md:gap-6">
-        <div className="bg-success-light rounded-2xl p-5 md:p-6 border-2 border-success/25 shadow-sm">
+        <div className="bg-success-light rounded-3xl p-5 md:p-6 border-2 border-success/25 shadow-lg">
           <h3 className="font-bold text-foreground mb-4 flex items-center gap-2">
             <div className="w-8 h-8 rounded-full bg-success/20 flex items-center justify-center">
               <Check className="w-4 h-4 text-success" />
             </div>
-          ) : planPdfUrl ? (
-            <div className="bg-card rounded-2xl border border-border shadow-sm p-4">
-              <iframe
-                title="Recovery Plan PDF"
-                src={planPdfUrl}
-                ref={pdfFrameRef}
-                className="w-full h-[65vh] rounded-lg border border-border"
-              />
+            Summary
+          </h3>
+          {isLoading && (
+            <p className="text-sm text-muted-foreground">Generating summary...</p>
+          )}
+          {aiError && (
+            <p className="text-sm text-destructive">{aiError}</p>
+          )}
+          {!isLoading && !aiError && aiSummary && (
+            <MarkdownContent
+              text={aiSummary}
+              className="text-sm text-foreground leading-relaxed space-y-2"
+            />
+          )}
+          {!summary && !isLoading && (
+            <p className="text-sm text-muted-foreground">
+              Complete the movement assessment to generate your summary.
+            </p>
+          )}
+        </div>
+
+        <div className="bg-amber-soft-light rounded-3xl p-5 md:p-6 border-2 border-amber-soft/25 shadow-lg">
+          <h3 className="font-bold text-foreground mb-4 flex items-center gap-2">
+            <div className="w-8 h-8 rounded-full bg-amber-soft/20 flex items-center justify-center">
+              <AlertTriangle className="w-4 h-4 text-amber-soft" />
             </div>
-          ) : (
-            <div className="bg-card rounded-2xl p-8 border border-border shadow-sm text-center space-y-4">
-              <div className="mx-auto w-14 h-14 rounded-full border-4 border-sage/30 border-t-sage animate-spin" />
-              <div className="space-y-2">
-                <p className="text-lg font-semibold text-foreground">
-                  Preparing your recovery plan
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  We’re analyzing your movement data and generating a personalized plan.
-                </p>
-              </div>
+            Recovery Plan
+          </h3>
+          {planLoading && (
+            <p className="text-sm text-muted-foreground">Generating recovery plan...</p>
+          )}
+          {planError && (
+            <p className="text-sm text-destructive">{planError}</p>
+          )}
+          {!planLoading && !planError && planText && (
+            <MarkdownContent
+              text={planText}
+              maxBlocks={8}
+              className="text-sm text-foreground leading-relaxed space-y-2"
+            />
+          )}
+          {!planLoading && !planError && !planText && aiSummary && (
+            <MarkdownContent
+              text={
+                extractRecoverySection(aiSummary) ??
+                "Click **View Recovery Plan** to generate a personalized detailed plan."
+              }
+              className="text-sm text-foreground leading-relaxed space-y-2"
+            />
+          )}
+          {!summary && !planLoading && (
+            <p className="text-sm text-muted-foreground">
+              Complete the movement assessment to generate your recovery plan.
+            </p>
+          )}
+        </div>
+      </div>
+
+      <div className="flex flex-col sm:flex-row justify-center gap-4 pt-2">
+        <Button variant="hero" size="lg" onClick={handleGeneratePlan}>
+          View Recovery Plan
+        </Button>
+          <Link to="/">
+            <Button variant="hero-outline" size="lg" className="w-full sm:w-auto">
+              Return Home
+            </Button>
+          </Link>
+        </div>
+      </div>
+
+      {showPlan && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="w-full max-w-3xl rounded-2xl border border-border bg-warm-white shadow-2xl max-h-[90vh] flex flex-col">
+            <div className="flex items-center justify-between gap-4 px-6 py-4 border-b border-border">
+              <h3 className="text-lg font-serif text-foreground">Recovery Plan</h3>
+              <Button variant="hero-outline" size="sm" onClick={() => setShowPlan(false)}>
+                Close
+              </Button>
+            </div>
+            <div className="px-6 py-4 overflow-y-auto">
+              {planLoading && (
+                <p className="text-sm text-muted-foreground">Generating recovery plan...</p>
+              )}
               {planError && (
                 <p className="text-sm text-destructive">{planError}</p>
               )}
