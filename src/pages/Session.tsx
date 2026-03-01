@@ -28,6 +28,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import botAvatar from "@/assets/pfpPic.png";
+import CountUp from "@/components/ui/CountUp";
 
 type Phase = "interview" | "movement" | "summary";
 type MovementExerciseSnapshot = {
@@ -1526,7 +1527,7 @@ ${JSON.stringify(
         <div className="inline-flex items-center justify-center w-28 h-28 rounded-full bg-sage-light border-4 border-sage/30 mx-auto">
           <div className="text-center">
             <span className="text-4xl font-bold text-foreground block">
-              {summary ? summary.averageScore : "--"}
+              {summary ? <CountUp to={summary.averageScore} duration={1.5} /> : "--"}
             </span>
             <span className="text-xs text-muted-foreground">/ 100</span>
           </div>
@@ -1535,7 +1536,6 @@ ${JSON.stringify(
           Great effort! Here is your detailed breakdown.
         </p>
       </div>
-
       {!summary && !isLoading ? (
         <div className="bg-card rounded-2xl p-6 border border-border shadow-sm text-center">
           <p className="text-sm text-muted-foreground">
@@ -1577,8 +1577,5 @@ ${JSON.stringify(
       </div>
     </div>
   </div>
-  </div>
 );
 };
-
-export default Session;
