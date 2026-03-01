@@ -259,6 +259,7 @@ const Session = () => {
           vapi={vapi}
           assistantId={vapi.assistantIdBackpain}
           onSummaryReady={setMovementSummary}
+          onComplete={() => setCurrentPhase("summary")}
         />
       )}
       {currentPhase === "summary" && (
@@ -661,10 +662,12 @@ const MovementPhase = ({
   vapi,
   assistantId,
   onSummaryReady,
+  onComplete,
 }: {
   vapi: ReturnType<typeof useVapi>;
   assistantId?: string;
   onSummaryReady: (summary: MovementSummary) => void;
+  onComplete: () => void;
 }) => {
   const [running, setRunning] = useState(true);
   const [cameraReady, setCameraReady] = useState(false);
@@ -789,7 +792,7 @@ const MovementPhase = ({
   }, []);
 
   useEffect(() => {
-    if (!vapi.isActive) return;
+    if (!vapi.isActive || isRoutineComplete) return;
     if (lastExerciseAnnouncedRef.current === exerciseIndex) return;
 
     setSuccessPopup(null);
@@ -798,7 +801,7 @@ const MovementPhase = ({
       `Exercise ${exerciseIndex + 1} of ${total}: ${currentExerciseLabel}. Hold steady and follow the on-screen guidance.`,
     );
     lastExerciseAnnouncedRef.current = exerciseIndex;
-  }, [exerciseIndex, currentExerciseLabel, vapi.isActive, vapi.speak]);
+  }, [exerciseIndex, currentExerciseLabel, vapi.isActive, vapi.speak, isRoutineComplete]);
 
   useEffect(() => {
     if (!running || !cameraReady) return;
@@ -932,6 +935,7 @@ const MovementPhase = ({
       snapshots.reduce((sum, item) => sum + item.score, 0) / snapshots.length,
     );
     onSummaryReady({ averageScore, exercises: snapshots });
+    onComplete();
   }, [isRoutineComplete, onSummaryReady]);
 
   const score = Math.round((posture.latestResult?.score ?? 0) * 100);
@@ -1341,7 +1345,7 @@ ${JSON.stringify(
       };
 
       lines.forEach((rawLine) => {
-        const line = rawLine.trimEnd();
+        const line = rawLine.trimEnd().replace(/\*\*(.*?)\*\*/g, "$1");
         if (!line) {
           cursorY += 8;
           return;
