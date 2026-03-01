@@ -84,7 +84,7 @@ const Hero = () => {
           <div className="flex items-center gap-2 text-muted-foreground">
             <Star className="w-5 h-5 text-amber-500 fill-amber-500" />
             <span className="text-base">
-              Over <CountUp to={100} duration={2.5} className="font-bold text-foreground" /> positive reviews
+              Over <CountUp to={100} duration={1.5} className="font-bold text-foreground" /> positive reviews
             </span>
           </div>
         </div>
