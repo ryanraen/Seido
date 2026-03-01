@@ -1539,76 +1539,21 @@ ${JSON.stringify(
       })}
     </div>
 
-    <div className="flex-1 flex flex-col">
-      {/* Header section with gradient and grid pattern */}
-      <div className="relative bg-gradient-to-br from-sage-light/40 via-background to-background px-6 md:px-12 pt-10 pb-16 overflow-hidden">
-        {/* Grid pattern overlay */}
-        <div 
-          className="absolute inset-0 opacity-30"
-          style={{
-            backgroundImage: 'linear-gradient(to right, hsl(var(--sage) / 0.15) 1px, transparent 1px), linear-gradient(to bottom, hsl(var(--sage) / 0.15) 1px, transparent 1px)',
-            backgroundSize: '40px 40px'
-          }}
-        />
-        
-        <div className="relative z-10 text-center space-y-4 max-w-2xl mx-auto animate-fade-in">
-          {/* Badge */}
-          <span className="inline-flex items-center gap-2 bg-terracotta-light text-terracotta px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest">
-            <span className="w-2 h-2 rounded-full bg-terracotta" />
-            Session Concluded
-          </span>
-          
-          {/* Title */}
-          <h1 className="text-4xl md:text-5xl font-serif text-foreground">
-            {summary ? "Session Complete" : "Analysis Required"}
-          </h1>
-          
-          {/* Subtitle */}
-          <p className="text-muted-foreground text-lg">
-            {summary 
-              ? "Great effort! Here is your detailed breakdown." 
-              : "Great effort. Complete the movement assessment to unlock your breakdown."}
-          </p>
+    <div className="flex-1 flex items-center justify-center p-4 md:p-8">
+      <div className="max-w-3xl w-full space-y-8 animate-fade-in">
+      <div className="text-center space-y-3">
+        <p className="text-sm text-terracotta font-bold uppercase tracking-widest">
+          Session Complete
+        </p>
+        <div className="inline-flex items-center justify-center w-28 h-28 rounded-full bg-sage-light border-4 border-sage/30 mx-auto">
+          <div className="text-center">
+            <span className="text-4xl font-bold text-foreground block">
+              {summary ? <CountUp to={summary.averageScore} duration={1.5} /> : "--"}
+            </span>
+            <span className="text-xs text-muted-foreground">/ 100</span>
+          </div>
         </div>
       </div>
-
-      {/* Main content */}
-      <div className="flex-1 px-6 md:px-12 py-8 bg-gradient-to-b from-background to-warm-white">
-        <div className="max-w-4xl mx-auto animate-fade-in">
-          <div className="flex flex-col lg:flex-row gap-8 items-start">
-            {/* Left: Score circle */}
-            <div className="flex flex-col items-center lg:w-1/3">
-              <div className="relative w-40 h-40">
-                {/* Dashed circle border */}
-                <svg className="absolute inset-0 w-full h-full" viewBox="0 0 160 160">
-                  <circle
-                    cx="80"
-                    cy="80"
-                    r="72"
-                    fill="none"
-                    stroke="hsl(var(--sage) / 0.3)"
-                    strokeWidth="2"
-                    strokeDasharray="8 6"
-                  />
-                </svg>
-                {/* Inner circle with score */}
-                <div className="absolute inset-4 rounded-full bg-white border-2 border-sage/20 flex items-center justify-center shadow-lg">
-                  <div className="text-center">
-                    <span className="text-5xl font-bold text-foreground block">
-                      {summary ? <CountUp to={summary.averageScore} duration={1.5} /> : "--"}
-                    </span>
-                    <span className="text-sm text-muted-foreground">/ 100</span>
-                  </div>
-                </div>
-              </div>
-              <p className="mt-4 font-semibold text-foreground">
-                {summary ? "Your Score" : "Score Pending"}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                {summary ? "Based on your assessment" : "Awaiting input data"}
-              </p>
-            </div>
-
       {!summary && !isLoading ? (
         <div className="bg-card rounded-2xl p-6 border border-border shadow-sm text-center">
           <p className="text-sm text-muted-foreground">
@@ -1649,7 +1594,6 @@ ${JSON.stringify(
         </Link>
       </div>
     </div>
-  </div>
   </div>
 );
 };
