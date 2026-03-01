@@ -1,4 +1,5 @@
 import { Camera, HeartPulse, Activity, Brain } from "lucide-react";
+import useScrollAnimation from "@/hooks/useScrollAnimation";
 
 const features = [
   {
@@ -28,36 +29,42 @@ const features = [
 ];
 
 const Features = () => {
+  const { ref: headerRef, isVisible: headerVisible } = useScrollAnimation({ threshold: 0.3, rootMargin: "-100px 0px" });
+  const { ref: cardsRef, isVisible: cardsVisible } = useScrollAnimation({ threshold: 0.15, rootMargin: "-80px 0px" });
+
   return (
     <section
       id="features"
       className="w-full px-6 md:px-12 py-16 md:py-20 bg-white"
     >
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-12 md:mb-14">
+        <div 
+          ref={headerRef}
+          className={`text-center mb-12 md:mb-14 animate-fade-up ${headerVisible ? 'is-visible' : ''}`}
+        >
           <p className="text-sm font-semibold text-sage uppercase tracking-widest mb-3">
             Features
           </p>
           <h2 className="text-3xl md:text-4xl font-bold text-foreground">
-            Recovery reimagined
+            Recovery Reimagined
           </h2>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {features.map((feature) => (
+        <div ref={cardsRef} className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          {features.map((feature, index) => (
             <div
               key={feature.title}
-              className="bg-muted/30 rounded-2xl border border-sage/10 p-6 md:p-7 hover:shadow-lg hover:border-sage/30 transition-all duration-300 group"
+              className={`bg-muted/30 rounded-3xl border border-sage/10 p-8 md:p-10 hover:shadow-xl hover:border-sage/30 transition-all duration-300 group animate-scale-in stagger-${index + 1} ${cardsVisible ? 'is-visible' : ''}`}
             >
               <div
-                className="w-12 h-12 rounded-xl bg-sage flex items-center justify-center mb-5 group-hover:scale-110 transition-transform"
+                className="w-16 h-16 rounded-2xl bg-sage flex items-center justify-center mb-6 group-hover:scale-110 transition-transform"
               >
-                <feature.icon className="w-5 h-5 text-white" />
+                <feature.icon className="w-7 h-7 text-white" />
               </div>
-              <h3 className="text-lg font-bold text-foreground mb-3">
+              <h3 className="text-xl font-bold text-foreground mb-2 pb-2 border-b-2 border-sage/40">
                 {feature.title}
               </h3>
-              <p className="text-muted-foreground text-sm leading-relaxed">
+              <p className="text-muted-foreground leading-relaxed mt-4">
                 {feature.description}
               </p>
             </div>

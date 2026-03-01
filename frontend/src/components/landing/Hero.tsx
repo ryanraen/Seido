@@ -4,14 +4,7 @@ import { Button } from "@/components/ui/button";
 
 const Hero = () => {
   return (
-    <section className="w-full px-6 md:px-12 py-12 md:py-20 lg:py-24 relative overflow-hidden">
-      {/* Decorative floating icon */}
-      <div className="hidden lg:flex absolute top-20 right-1/4 w-16 h-16 bg-sage-light border-2 border-sage rounded-full items-center justify-center shadow-lg">
-        <svg className="w-8 h-8 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 4v16m8-8H4" />
-        </svg>
-      </div>
-      
+    <section className="w-full px-6 md:px-12 py-12 md:py-20 lg:py-24 min-h-[90vh] flex items-center relative overflow-hidden">
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
         {/* Left content */}
         <div className="flex-1 space-y-7">
@@ -20,7 +13,7 @@ const Hero = () => {
             AI-Powered Rehabilitation v2.0
           </div>
 
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif leading-tight text-foreground">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif leading-tight bg-gradient-to-r from-foreground via-primary to-sage bg-clip-text text-transparent">
             Master Every Movement Analysis
           </h1>
           <h2 className="text-2xl md:text-3xl font-sans font-bold text-foreground">
@@ -69,30 +62,7 @@ const Hero = () => {
             </Button>
           </div>
 
-          <div className="flex flex-wrap items-center gap-6 pt-4">
-            <div className="flex items-center gap-2">
-              <div className="flex -space-x-2">
-                <div className="w-8 h-8 rounded-full bg-sage border-2 border-background flex items-center justify-center">
-                  <span className="text-xs font-bold text-white">👤</span>
-                </div>
-                <div className="w-8 h-8 rounded-full bg-primary border-2 border-background flex items-center justify-center">
-                  <span className="text-xs font-bold text-white">👤</span>
-                </div>
-              </div>
-              <div>
-                <span className="text-sm font-bold text-foreground">12k+</span>
-                <span className="text-sm text-muted-foreground ml-1">Lives improved</span>
-              </div>
-            </div>
-            <div className="flex items-center gap-2 bg-card px-3 py-2 rounded-lg border border-border">
-              <div className="w-6 h-6 flex items-center justify-center">
-                <svg className="w-5 h-5 text-sage" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                </svg>
-              </div>
-              <span className="text-sm font-semibold text-foreground">HIPAA Compliant</span>
-            </div>
-          </div>
+
         </div>
 
         {/* Right demo card */}
