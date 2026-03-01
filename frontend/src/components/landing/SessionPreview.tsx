@@ -1,6 +1,6 @@
 import { Leaf, LogOut, Send, Camera, Bot } from "lucide-react";
 import useScrollAnimation from "@/hooks/useScrollAnimation";
-import poseImg from "@/assets/chicken.png";
+import poseImg from "@/assets/stretches.jpg";
 
 const SessionPreview = () => {
   const { ref: sectionRef, isVisible: sectionVisible } = useScrollAnimation({ threshold: 0.2, rootMargin: "-50px 0px" });
