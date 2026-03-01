@@ -634,20 +634,21 @@ const MovementPhase = ({
     () => createScoreBreakdown(posture.latestResult?.metrics ?? {}, score),
     [posture.latestResult, score],
   );
-  const movementIssues = posture.latestResult?.issues ?? [];
-  const movementInFrame = !movementIssues.some(
-    (issue) => issue.id === "low-visibility" || issue.id === "missing-landmarks",
-  );
-  const movementSideFacing = !movementIssues.some((issue) => issue.id === "side-facing");
-  const analysisNeedsFullBody =
-    !movementInFrame || !movementSideFacing;
-  const analysisPrompt = cameraError
-    ? `Camera error: ${cameraError}`
-    : !cameraReady
-      ? "Waiting for camera permission..."
-      : analysisNeedsFullBody
-        ? "Keep at least one full body side visible to the camera."
-        : null;
+  const tip =
+    posture.issues[0] ?? "Keep your hips level with your shoulders for a better score.";
+  const feedbackMessage =
+    posture.issues[0] ??
+    (cameraReady
+      ? posture.status === "good"
+        ? "Great form. Keep this alignment."
+        : "Hold steady and maintain your alignment."
+      : "Preparing movement analysis...");
+  const feedbackToneClass =
+    posture.status === "good"
+      ? "bg-success text-success-foreground border-success"
+      : posture.status === "bad"
+        ? "bg-destructive text-destructive-foreground border-destructive"
+        : "bg-amber-soft text-foreground border-amber-soft";
   const circumference = 2 * Math.PI * 52;
   const scoreArc = (circumference * score) / 100;
 
@@ -684,13 +685,14 @@ const MovementPhase = ({
               ref={overlayRef}
               className="absolute inset-0 h-full w-full pointer-events-none"
             />
-            {analysisPrompt && (
-              <div className="absolute top-0 left-0 right-0 px-4 py-2 bg-foreground/70 backdrop-blur-sm">
-                <p className="text-xs text-muted-foreground font-medium">
-                  {analysisPrompt}
-                </p>
+            <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 px-4 py-2">
+              <div
+                className={`rounded-full border px-4 py-2 text-xs md:text-sm font-semibold shadow-lg whitespace-nowrap max-w-[90vw] truncate ${feedbackToneClass}`}
+                title={feedbackMessage}
+              >
+                {feedbackMessage}
               </div>
-            )}
+            </div>
             <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between gap-3 px-4 py-3 bg-foreground/70 backdrop-blur-sm">
               <div className="flex items-center gap-2">
                 <div className={`w-2 h-2 rounded-full ${running ? "bg-terracotta animate-pulse" : "bg-muted-foreground/60"}`} />
