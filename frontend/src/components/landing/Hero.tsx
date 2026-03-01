@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Star, Play, Check, Leaf } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import TiltableCard from "@/components/ui/TiltableCard";
 import meditationLandingImg from "@/assets/meditation_landing.png";
 
 const Hero = () => {
@@ -123,7 +124,8 @@ const Hero = () => {
         {/* Right demo cards */}
         <div className="flex-1 max-w-lg w-full space-y-5">
           {/* Live Demo Card */}
-          <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-border p-6">
+          <TiltableCard rotateAmplitude={10} scaleOnHover={1.02}>
+            <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-border p-6">
             {/* Card Header with dots and LIVE DEMO */}
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-2">
@@ -166,9 +168,11 @@ const Hero = () => {
               </div>
             </div>
           </div>
+          </TiltableCard>
 
           {/* Movement Analysis Card */}
-          <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-border">
+          <TiltableCard rotateAmplitude={10} scaleOnHover={1.02}>
+            <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-border">
             {/* Card Header */}
             <div className="bg-white p-5 border-b border-border">
               <div className="flex items-center justify-between mb-4">
@@ -233,6 +237,7 @@ const Hero = () => {
               </button>
             </div>
           </div>
+          </TiltableCard>
         </div>
       </div>
 

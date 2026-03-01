@@ -1,5 +1,6 @@
 import { Camera, HeartPulse, Activity, Brain } from "lucide-react";
 import useScrollAnimation from "@/hooks/useScrollAnimation";
+import TiltableCard from "@/components/ui/TiltableCard";
 
 const features = [
   {
@@ -54,19 +55,23 @@ const Features = () => {
           {features.map((feature, index) => (
             <div
               key={feature.title}
-              className={`bg-muted/30 rounded-3xl border border-sage/10 p-8 md:p-10 hover:shadow-xl hover:border-sage/30 transition-all duration-300 group animate-scale-in stagger-${index + 1} ${cardsVisible ? 'is-visible' : ''}`}
+              className={`animate-scale-in stagger-${index + 1} ${cardsVisible ? 'is-visible' : ''}`}
             >
-              <div
-                className="w-16 h-16 rounded-2xl bg-sage flex items-center justify-center mb-6 group-hover:scale-110 transition-transform"
-              >
-                <feature.icon className="w-7 h-7 text-white" />
-              </div>
-              <h3 className="text-xl font-bold text-foreground mb-2 pb-2 border-b-2 border-sage/40">
-                {feature.title}
-              </h3>
-              <p className="text-muted-foreground leading-relaxed mt-4">
-                {feature.description}
-              </p>
+              <TiltableCard rotateAmplitude={10} scaleOnHover={1.02}>
+                <div className="bg-muted/30 rounded-3xl border border-sage/10 p-8 md:p-10 hover:shadow-xl hover:border-sage/30 transition-all duration-300 group">
+                  <div
+                    className="w-16 h-16 rounded-2xl bg-sage flex items-center justify-center mb-6 group-hover:scale-110 transition-transform"
+                  >
+                    <feature.icon className="w-7 h-7 text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold text-foreground mb-2 pb-2 border-b-2 border-sage/40">
+                    {feature.title}
+                  </h3>
+                  <p className="text-muted-foreground leading-relaxed mt-4">
+                    {feature.description}
+                  </p>
+                </div>
+              </TiltableCard>
             </div>
           ))}
         </div>
