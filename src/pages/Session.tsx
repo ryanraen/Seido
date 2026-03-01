@@ -1521,81 +1521,89 @@ ${JSON.stringify(
 
   return (
     <div className="flex flex-col md:flex-row min-h-[calc(100vh-65px)]">
-    <div className="hidden md:flex w-56 border-r-2 border-border bg-card flex-col">
-      <PhaseIndicator current="summary" />
-    </div>
+      <div className="hidden md:flex w-56 border-r-2 border-border bg-card flex-col">
+        <PhaseIndicator current="summary" />
+      </div>
 
-    <div className="md:hidden flex gap-2 p-3 bg-card border-b border-border overflow-x-auto">
-      {phases.map((phase, i) => {
-        const isActive = phase.id === "summary";
-        return (
-          <span
-            key={phase.id}
-            className={`text-xs px-3 py-1.5 rounded-full font-semibold whitespace-nowrap ${isActive ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
-          >
-            {i + 1}. {phase.sublabel}
-          </span>
-        );
-      })}
-    </div>
-
-    <div className="flex-1 flex items-center justify-center p-4 md:p-8">
-      <div className="max-w-3xl w-full space-y-8 animate-fade-in">
-      <div className="text-center space-y-3">
-        <p className="text-sm text-terracotta font-bold uppercase tracking-widest">
-          Session Complete
-        </p>
-        <div className="inline-flex items-center justify-center w-28 h-28 rounded-full bg-sage-light border-4 border-sage/30 mx-auto">
-          <div className="text-center">
-            <span className="text-4xl font-bold text-foreground block">
-              {summary ? <CountUp to={summary.averageScore} duration={1.5} /> : "--"}
+      <div className="md:hidden flex gap-2 p-3 bg-card border-b border-border overflow-x-auto">
+        {phases.map((phase, i) => {
+          const isActive = phase.id === "summary";
+          return (
+            <span
+              key={phase.id}
+              className={`text-xs px-3 py-1.5 rounded-full font-semibold whitespace-nowrap ${
+                isActive ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+              }`}
+            >
+              {i + 1}. {phase.sublabel}
             </span>
             <span className="text-xs text-muted-foreground">/ 100</span>
           </div>
         </div>
       </div>
-      {!summary && !isLoading ? (
-        <div className="bg-card rounded-2xl p-6 border border-border shadow-sm text-center">
-          <p className="text-sm text-muted-foreground">
-            Complete the movement assessment to generate your recovery plan.
-          </p>
-        </div>
-      ) : planPdfUrl ? (
-        <div className="bg-card rounded-2xl border border-border shadow-sm p-4">
-          <iframe
-            title="Recovery Plan PDF"
-            src={planPdfUrl}
-            ref={pdfFrameRef}
-            className="w-full h-[65vh] rounded-lg border border-border"
-          />
-        </div>
-      ) : (
-        <div className="bg-card rounded-2xl p-8 border border-border shadow-sm text-center space-y-4">
-          <div className="mx-auto w-14 h-14 rounded-full border-4 border-sage/30 border-t-sage animate-spin" />
-          <div className="space-y-2">
-            <p className="text-lg font-semibold text-foreground">
-              Preparing your recovery plan
+
+      <div className="flex-1 flex items-center justify-center p-4 md:p-8">
+        <div className="max-w-3xl w-full space-y-8 animate-fade-in">
+          <div className="text-center space-y-3">
+            <p className="text-sm text-terracotta font-bold uppercase tracking-widest">
+              Session Complete
             </p>
-            <p className="text-sm text-muted-foreground">
-              We’re analyzing your movement data and generating a personalized plan.
+            <div className="inline-flex items-center justify-center w-28 h-28 rounded-full bg-sage-light border-4 border-sage/30 mx-auto">
+              <div className="text-center">
+                <span className="text-4xl font-bold text-foreground block">
+                  {summary ? <CountUp to={summary.averageScore} duration={1.5} /> : "--"}
+                </span>
+                <span className="text-xs text-muted-foreground">/ 100</span>
+              </div>
+            </div>
+            <p className="text-muted-foreground text-lg">
+              Great effort! Here is your detailed breakdown.
             </p>
           </div>
-          {planError && (
-            <p className="text-sm text-destructive">{planError}</p>
-          )}
-        </div>
-      )}
 
-      <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
-        <Link to="/">
-          <Button variant="hero-outline" size="lg" className="w-full sm:w-auto">
-            Return Home
-          </Button>
-        </Link>
+          {!summary && !isLoading ? (
+            <div className="bg-card rounded-2xl p-6 border border-border shadow-sm text-center">
+              <p className="text-sm text-muted-foreground">
+                Complete the movement assessment to generate your recovery plan.
+              </p>
+            </div>
+          ) : planPdfUrl ? (
+            <div className="bg-card rounded-2xl border border-border shadow-sm p-4">
+              <iframe
+                title="Recovery Plan PDF"
+                src={planPdfUrl}
+                ref={pdfFrameRef}
+                className="w-full h-[65vh] rounded-lg border border-border"
+              />
+            </div>
+          ) : (
+            <div className="bg-card rounded-2xl p-8 border border-border shadow-sm text-center space-y-4">
+              <div className="mx-auto w-14 h-14 rounded-full border-4 border-sage/30 border-t-sage animate-spin" />
+              <div className="space-y-2">
+                <p className="text-lg font-semibold text-foreground">
+                  Preparing your recovery plan
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  We’re analyzing your movement data and generating a personalized plan.
+                </p>
+              </div>
+              {planError && (
+                <p className="text-sm text-destructive">{planError}</p>
+              )}
+            </div>
+          )}
+
+          <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
+            <Link to="/">
+              <Button variant="hero-outline" size="lg" className="w-full sm:w-auto">
+                Return Home
+              </Button>
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
 };
 
 export default Session;
