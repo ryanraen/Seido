@@ -8,7 +8,7 @@
 <h1 align="center">Seido</h1>
 
 <p align="center">
-  <b>Mountain Madness 2026 Hackathon Project</b><br/>
+  <b>Mountain Madness 2026 Hackathon Winner 🥇</b><br/>
   Team Seido with Jerry, Mike, Ryan.
 </p>
 
