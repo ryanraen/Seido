@@ -1,41 +1,48 @@
 // hooks/useVapi.ts
 import { useEffect, useRef, useState, useCallback } from "react";
 import Vapi from "@vapi-ai/web";
-
-const VAPI_PUBLIC_KEY = import.meta.env.VITE_VAPI_PUBLIC_KEY;
-const VAPI_ASSISTANT_ID = import.meta.env.VITE_VAPI_ASSISTANT_ID;
-const VAPI_ASSISTANT_ID_BACKPAIN = import.meta.env.VITE_VAPI_ASSISTANT_ID_BACKPAIN;
+import { getRuntimeConfig } from "@/lib/runtimeConfig";
 
 type OrbMode = "idle" | "listening" | "talking";
 type CallState = "idle" | "connecting" | "active" | "speaking" | "listening" | "ending";
 
-// Map Vapi call states → your orb modes
+// Map Vapi call states -> orb modes
 const STATE_TO_MODE: Record<CallState, OrbMode> = {
-  idle:       "idle",
+  idle: "idle",
   connecting: "listening",
-  active:     "listening",
-  speaking:   "talking",
-  listening:  "listening",
-  ending:     "idle",
+  active: "listening",
+  speaking: "talking",
+  listening: "listening",
+  ending: "idle",
 };
 
 export function useVapi() {
+  const runtime = getRuntimeConfig();
+  const vapiPublicKey = runtime.vapiPublicKey;
+  const assistantIdDefault = runtime.vapiAssistantIdDefault;
+  const assistantIdBackpain = runtime.vapiAssistantIdBackpain;
+
   const vapiRef = useRef<Vapi | null>(null);
 
-  const [callState, setCallState]           = useState<CallState>("idle");
-  const [transcript, setTranscript]         = useState<{ role: string; text: string }[]>([]);
+  const [callState, setCallState] = useState<CallState>("idle");
+  const [transcript, setTranscript] = useState<{ role: string; text: string }[]>([]);
   const [assessmentResult, setAssessmentResult] = useState<any>(null);
-  const [error, setError]                   = useState<string | null>(null);
-  const [isMuted, setIsMuted]               = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isMuted, setIsMuted] = useState(false);
 
   useEffect(() => {
-    const vapi = new Vapi(VAPI_PUBLIC_KEY);
+    if (!vapiPublicKey) {
+      setError("Missing Vapi public key. Open API Settings.");
+      return;
+    }
+
+    const vapi = new Vapi(vapiPublicKey);
     vapiRef.current = vapi;
 
-    vapi.on("call-start",   () => setCallState("active"));
-    vapi.on("call-end",     () => setCallState("idle"));
+    vapi.on("call-start", () => setCallState("active"));
+    vapi.on("call-end", () => setCallState("idle"));
     vapi.on("speech-start", () => setCallState("speaking"));
-    vapi.on("speech-end",   () => setCallState("listening"));
+    vapi.on("speech-end", () => setCallState("listening"));
 
     vapi.on("message", (msg: any) => {
       if (msg.type === "transcript") {
@@ -61,21 +68,30 @@ export function useVapi() {
       setCallState("idle");
     });
 
-    return () => { vapi.stop(); };
-  }, []);
+    return () => {
+      vapi.stop();
+    };
+  }, [vapiPublicKey]);
 
-  const startCall = useCallback(async (assistantId?: string) => {
-    setCallState("connecting");
-    setTranscript([]);
-    setAssessmentResult(null);
-    setError(null);
-    try {
-      await vapiRef.current?.start(assistantId ?? VAPI_ASSISTANT_ID);
-    } catch (err: any) {
-      setError(err?.message ?? "Failed to start voice session");
-      setCallState("idle");
-    }
-  }, []);
+  const startCall = useCallback(
+    async (assistantId?: string) => {
+      setCallState("connecting");
+      setTranscript([]);
+      setAssessmentResult(null);
+      setError(null);
+      try {
+        const targetAssistant = assistantId ?? assistantIdDefault;
+        if (!targetAssistant) {
+          throw new Error("Missing Vapi assistant ID. Open API Settings.");
+        }
+        await vapiRef.current?.start(targetAssistant);
+      } catch (err: any) {
+        setError(err?.message ?? "Failed to start voice session");
+        setCallState("idle");
+      }
+    },
+    [assistantIdDefault],
+  );
 
   const endCall = useCallback(() => {
     setCallState("ending");
@@ -89,7 +105,8 @@ export function useVapi() {
     setIsMuted(next);
   }, []);
 
-  const canSpeak = callState === "active" || callState === "listening" || callState === "speaking";
+  const canSpeak =
+    callState === "active" || callState === "listening" || callState === "speaking";
   const speak = useCallback(
     (message: string) => {
       if (!message.trim()) return;
@@ -100,7 +117,7 @@ export function useVapi() {
   );
 
   return {
-    orbMode: STATE_TO_MODE[callState],  // ← plug directly into <PulsingOrb mode={orbMode} />
+    orbMode: STATE_TO_MODE[callState],
     callState,
     transcript,
     assessmentResult,
@@ -109,8 +126,8 @@ export function useVapi() {
     isActive: callState !== "idle",
     isConnected: canSpeak,
     startCall,
-    assistantIdDefault: VAPI_ASSISTANT_ID,
-    assistantIdBackpain: VAPI_ASSISTANT_ID_BACKPAIN,
+    assistantIdDefault,
+    assistantIdBackpain,
     endCall,
     toggleMute,
     speak,
@@ -126,8 +143,7 @@ function upsertTranscriptMessage(
   const isFinal = nextMessage.transcriptType === "final";
   const nextRole = normalizeRole(nextMessage.role);
   const nextText = normalizeTranscriptText(nextMessage.text);
-  const sameRoleAsLast =
-    Boolean(last) && normalizeRole(last.role) === nextRole;
+  const sameRoleAsLast = Boolean(last) && normalizeRole(last.role) === nextRole;
 
   // Late/replayed events can arrive out of order; skip near-duplicate same-role content.
   const mostRecentSameRole = [...next]

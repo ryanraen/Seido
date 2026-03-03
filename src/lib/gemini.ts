@@ -1,22 +1,25 @@
+import { getRuntimeConfig } from "@/lib/runtimeConfig";
+
 type GeminiOptions = {
   model?: string;
   prompt: string;
 };
 
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
-const DEFAULT_MODEL = import.meta.env.VITE_GEMINI_MODEL || "gemini-2.0-flash";
-
 export async function generateGeminiText({ model, prompt }: GeminiOptions) {
-  if (!GEMINI_API_KEY) {
-    throw new Error("Missing VITE_GEMINI_API_KEY");
+  const runtime = getRuntimeConfig();
+  const geminiApiKey = runtime.geminiApiKey;
+  const defaultModel = runtime.geminiModel || "gemini-2.0-flash";
+
+  if (!geminiApiKey) {
+    throw new Error("Missing Gemini API key. Open API Settings.");
   }
 
-  const targetModel = model ?? DEFAULT_MODEL;
+  const targetModel = model ?? defaultModel;
   const modelName = targetModel.startsWith("models/")
     ? targetModel
     : `models/${targetModel}`;
   const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/${modelName}:generateContent?key=${GEMINI_API_KEY}`,
+    `https://generativelanguage.googleapis.com/v1beta/${modelName}:generateContent?key=${geminiApiKey}`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
